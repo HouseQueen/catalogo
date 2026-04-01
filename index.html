@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="email-obfuscation" content="off">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>House Queen — Catálogo de Productos</title>
 <meta name="description" content="Comercializadora House Queen - Catálogo de lencería para el hogar. Sábanas, toallas, cobijas, cortinas y más. Bogotá, Colombia.">
@@ -296,7 +295,7 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
     <div class="contact-item">
       <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.5" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
       <span class="contact-label">Correo</span>
-      <span class="contact-val">comercializadorahousequeen&#64;gmail&#46;com</span>
+      <span class="contact-val"><a href="mailto:comercializadorahousequeen@gmail.com">comercializadorahousequeen@gmail.com</a></span>
     </div>
   </div>
 </section>
@@ -392,11 +391,11 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
 <script>
 const SUPABASE_URL = 'https://susqggsvnuipdzcpalvo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1c3FnZ3N2bnVpcGR6Y3BhbHZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDcwNTgsImV4cCI6MjA5MDU4MzA1OH0.fwYEHuMpoJQ_wjQ97mJsEW0M48vGD28N6tZS1a1fayY';
+// El logo se guarda siempre con este nombre fijo → misma URL para todos
+const LOGO_PATH = 'logo/housequeen_logo.jpg';
+const LOGO_PUBLIC_URL = `${SUPABASE_URL}/storage/v1/object/public/productos/${LOGO_PATH}`;
 const PK = 'hq_pwd';
 const getPwd = () => localStorage.getItem(PK) || 'housequeen2025';
-// El logo se guarda como un producto especial con name='__logo__'
-// Así usa exactamente el mismo Storage y tabla que los productos normales
-const LOGO_NAME = '__logo__';
 
 const sbFetch = async (path, opts = {}) => {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -418,10 +417,11 @@ let allProducts = [], currentCat = 'todos', currentSearch = '', currentSort = 'd
 let editId = null, selectedFile = null, currentImgUrl = null, selectedLogoFile = null;
 
 // ── LOGO ──
+// Aplica la URL del logo a nav + hero
 function applyLogo(url) {
-  const navPh  = document.getElementById('navLogoPh');
+  const navPh = document.getElementById('navLogoPh');
   const navImg = document.getElementById('navLogoImg');
-  const heroPh  = document.getElementById('heroLogoPh');
+  const heroPh = document.getElementById('heroLogoPh');
   const heroImg = document.getElementById('heroLogoImg');
   if (navPh)  navPh.style.display  = 'none';
   if (navImg) { navImg.src = url; navImg.style.display = 'block'; }
@@ -429,18 +429,20 @@ function applyLogo(url) {
   if (heroImg) { heroImg.src = url; heroImg.style.display = 'block'; }
 }
 
-// Lee el logo desde la tabla products (registro especial name='__logo__')
-// Exactamente igual que los productos → funciona en todos los dispositivos
+// Al cargar la página: intenta mostrar el logo desde la URL fija en Supabase
 async function loadLogo() {
+  // Primero intenta con la URL pública fija (funciona en todos los dispositivos)
   try {
-    const rows = await sbFetch(`products?name=eq.${LOGO_NAME}&select=image_url`, { prefer: '' });
-    if (rows.length && rows[0].image_url) {
-      applyLogo(rows[0].image_url);
-      setLogoDropPreview(rows[0].image_url);
+    const res = await fetch(LOGO_PUBLIC_URL, { method: 'HEAD' });
+    if (res.ok) {
+      // Añadir cache-buster para evitar que el browser use versión vieja
+      applyLogo(LOGO_PUBLIC_URL + '?t=' + Date.now());
+      // Actualizar preview en panel logo
+      setLogoDropPreview(LOGO_PUBLIC_URL);
       return;
     }
   } catch (e) {}
-  // Fallback caché local
+  // Fallback: localStorage (logo subido antes del cambio)
   const local = localStorage.getItem('hq_logo');
   if (local) applyLogo(local);
 }
@@ -448,7 +450,9 @@ async function loadLogo() {
 function setLogoDropPreview(url) {
   const zone = document.getElementById('logoDropZone');
   if (!zone) return;
-  zone.innerHTML = `<img src="${url}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:50%"><div style="position:absolute;bottom:4px;right:4px;background:rgba(26,18,8,0.75);color:#C9A84C;font-size:9px;padding:2px 8px;border-radius:2px">Cambiar</div>`;
+  zone.innerHTML = `
+    <img src="${url}?t=${Date.now()}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:50%">
+    <div style="position:absolute;bottom:4px;right:4px;background:rgba(26,18,8,0.75);color:#C9A84C;font-size:9px;padding:2px 8px;border-radius:2px">Cambiar</div>`;
 }
 
 function handleLogoSelect(input) {
@@ -476,49 +480,31 @@ async function saveLogo() {
   btn.innerHTML = '<span class="spinner"></span>Subiendo...';
   document.getElementById('logoStatusMsg').style.display = 'none';
   try {
-    // 1. Subir imagen al Storage (igual que fotos de productos)
-    const ext = selectedLogoFile.name.split('.').pop();
-    const fname = `logo_${Date.now()}.${ext}`;
-    const upRes = await fetch(`${SUPABASE_URL}/storage/v1/object/productos/${fname}`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': selectedLogoFile.type || 'image/jpeg',
-        'x-upsert': 'true'
-      },
-      body: selectedLogoFile
-    });
-    if (!upRes.ok) throw new Error(await upRes.text());
-    const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/productos/${fname}`;
-
-    // 2. Guardar/actualizar en tabla products como registro especial
-    // Buscar si ya existe
-    const existing = await sbFetch(`products?name=eq.${LOGO_NAME}&select=id`, { prefer: '' });
-    if (existing.length) {
-      // Actualizar
-      await sbFetch(`products?name=eq.${LOGO_NAME}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ image_url: imageUrl }),
-        prefer: 'return=minimal'
-      });
-    } else {
-      // Crear
-      await sbFetch('products', {
+    // Subir con nombre FIJO (upsert) → misma URL siempre
+    const res = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/productos/${LOGO_PATH}`,
+      {
         method: 'POST',
-        body: JSON.stringify({ name: LOGO_NAME, image_url: imageUrl, category: '__system__' })
-      });
-    }
-
-    // 3. Aplicar en pantalla y caché
-    applyLogo(imageUrl);
-    setLogoDropPreview(imageUrl);
-    localStorage.setItem('hq_logo', imageUrl);
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': selectedLogoFile.type || 'image/jpeg',
+          'x-upsert': 'true'   // sobreescribe si ya existe
+        },
+        body: selectedLogoFile
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    // Guardar también en localStorage como caché
+    localStorage.setItem('hq_logo', LOGO_PUBLIC_URL);
+    // Mostrar en página (con cache-buster)
+    applyLogo(LOGO_PUBLIC_URL + '?t=' + Date.now());
+    setLogoDropPreview(LOGO_PUBLIC_URL);
     setLogoStatus('✓ Logo guardado — visible en todos los dispositivos', true);
-    showToast('Logo actualizado ✓');
+    showToast('Logo actualizado en todos los dispositivos ✓');
     selectedLogoFile = null;
   } catch (e) {
-    setLogoStatus('Error: ' + (e.message || 'Intenta de nuevo'), false);
+    setLogoStatus('Error al subir. Verifica tu conexión e inténtalo de nuevo.', false);
     showToast('Error subiendo logo');
   } finally {
     btn.disabled = false;
@@ -529,8 +515,7 @@ async function saveLogo() {
 // ── PRODUCTOS ──
 async function loadProducts() {
   try {
-    const raw = await sbFetch('products?select=*&order=created_at.desc', { prefer: '' });
-    allProducts = raw.filter(p => p.name !== LOGO_NAME && p.category !== '__system__');
+    allProducts = await sbFetch('products?select=*&order=created_at.desc', { prefer: '' });
     renderCatMenu();
     renderProducts();
   } catch (e) {
@@ -609,10 +594,10 @@ function sortProducts(val) { currentSort = val; renderProducts(); }
 function setView(v) { currentView = v; document.getElementById('productsGrid').classList.toggle('list-view', v === 'list'); document.getElementById('btnGrid').classList.toggle('active', v === 'grid'); document.getElementById('btnList').classList.toggle('active', v === 'list'); }
 
 // AUTH
-window.openAdmin = function openAdmin() { document.getElementById('pwdOverlay').classList.add('open'); document.getElementById('pwdInput').value = ''; document.getElementById('pwdError').style.display = 'none'; setTimeout(() => document.getElementById('pwdInput').focus(), 100); }
-window.closePwd = function closePwd() { document.getElementById('pwdOverlay').classList.remove('open'); }
-window.checkPwd = function checkPwd() { if (document.getElementById('pwdInput').value === getPwd()) { closePwd(); document.getElementById('adminOverlay').classList.add('open'); loadAdminList(); } else { document.getElementById('pwdError').style.display = 'block'; document.getElementById('pwdInput').value = ''; document.getElementById('pwdInput').focus(); } }
-window.closeAdmin = function closeAdmin() { document.getElementById('adminOverlay').classList.remove('open'); }
+function openAdmin() { document.getElementById('pwdOverlay').classList.add('open'); document.getElementById('pwdInput').value = ''; document.getElementById('pwdError').style.display = 'none'; setTimeout(() => document.getElementById('pwdInput').focus(), 100); }
+function closePwd() { document.getElementById('pwdOverlay').classList.remove('open'); }
+function checkPwd() { if (document.getElementById('pwdInput').value === getPwd()) { closePwd(); document.getElementById('adminOverlay').classList.add('open'); loadAdminList(); } else { document.getElementById('pwdError').style.display = 'block'; document.getElementById('pwdInput').value = ''; document.getElementById('pwdInput').focus(); } }
+function closeAdmin() { document.getElementById('adminOverlay').classList.remove('open'); }
 function switchTab(tab, btn) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
@@ -721,4 +706,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAdmin
 loadLogo();
 loadProducts();
 // Crear bucket silenciosamente
-fetch(`${SUPABASE_URL
+fetch(`${SUPABASE_URL}/storage/v1/bucket`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'productos', name: 'productos', public: true }) }).catch(() => {});
+</script>
+</body>
+</html>
