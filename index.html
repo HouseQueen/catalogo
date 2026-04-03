@@ -1,159 +1,146 @@
-<!-- SOLO TE PONGO LA PARTE MODIFICADA PARA QUE NO SE TE HAGA ETERNO -->
-<!-- SI QUIERES TE DOY EL HTML ENTERO LIMPIO TAMBIÉN -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Queen</title>
+
+<style>
+body{font-family:Arial;margin:0;background:#f5f5f5}
+header{background:#111;color:#fff;padding:15px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px;padding:20px}
+.card{background:#fff;padding:10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+img{width:100%;border-radius:5px}
+button{padding:8px 12px;background:#000;color:#fff;border:none;cursor:pointer}
+.admin{position:fixed;bottom:20px;right:20px}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div id="logo"></div>
+  <h1>House Queen</h1>
+</header>
+
+<div class="grid" id="productsGrid"></div>
+
+<div class="admin">
+  <input type="file" id="logoInput">
+  <button onclick="saveLogo()">Subir Logo</button>
+</div>
 
 <script>
-const SUPABASE_URL='https://susqggsvnuipdzcpalvo.supabase.co';
-const SUPABASE_KEY='TU_API_KEY_AQUI'; // ⚠️ CAMBIA ESTO
-
-const PK='hq_pwd';
-const getPwd=()=>localStorage.getItem(PK)||'housequeen2025';
+const SUPABASE_URL="https://susqggsvnuipdzcpalvo.supabase.co";
+const SUPABASE_KEY="TU_API_KEY_AQUI"; // ⚠️ PON TU KEY
 
 const sbFetch=async(path,opts={})=>{
   const res=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{
     ...opts,
     headers:{
-      'apikey':SUPABASE_KEY,
-      'Authorization':`Bearer ${SUPABASE_KEY}`,
-      'Content-Type':'application/json',
-      'Prefer':opts.prefer||'return=representation',
-      ...opts.headers
+      apikey:SUPABASE_KEY,
+      Authorization:`Bearer ${SUPABASE_KEY}`,
+      "Content-Type":"application/json",
+      Prefer:opts.prefer||"return=representation"
     }
   });
-  if(!res.ok) throw new Error(await res.text());
   const txt=await res.text();
   return txt?JSON.parse(txt):[];
 };
 
-const uploadFile=async(file,bucket)=>{
-  const ext=file.name.split('.').pop();
-  const name=`${Date.now()}_${Math.random().toString(36).substr(2,5)}.${ext}`;
+const uploadFile=async(file)=>{
+  const name=Date.now()+"_"+file.name;
 
-  const res=await fetch(`${SUPABASE_URL}/storage/v1/object/${bucket}/${name}`,{
-    method:'POST',
+  await fetch(`${SUPABASE_URL}/storage/v1/object/productos/${name}`,{
+    method:"POST",
     headers:{
-      'apikey':SUPABASE_KEY,
-      'Authorization':`Bearer ${SUPABASE_KEY}`,
-      'Content-Type':file.type,
-      'x-upsert':'true'
+      apikey:SUPABASE_KEY,
+      Authorization:`Bearer ${SUPABASE_KEY}`,
+      "Content-Type":file.type
     },
     body:file
   });
 
-  if(!res.ok) throw new Error('Error subiendo archivo');
-
-  return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${name}`;
+  return `${SUPABASE_URL}/storage/v1/object/public/productos/${name}`;
 };
 
 let allProducts=[];
 
-/* =========================
+/* =====================
    LOGO DESDE PRODUCTS
-========================= */
+===================== */
 async function loadLogo(){
-  try{
-    const rows=await sbFetch("products?name=eq.__LOGO__&select=image_url",{prefer:''});
-    if(rows.length && rows[0].image_url){
-      applyLogo(rows[0].image_url);
-      return;
-    }
-  }catch(e){}
+  const data=await sbFetch("products?name=eq.__LOGO__");
 
-  const local=localStorage.getItem('hq_logo');
-  if(local) applyLogo(local);
-}
-
-function applyLogo(url){
-  const navPh=document.getElementById('navLogoPlaceholder');
-  if(navPh){
-    navPh.outerHTML=`<img class="nav-logo-img" src="${url}">`;
-  }
-
-  const heroPh=document.getElementById('heroLogoPlaceholder');
-  if(heroPh){
-    heroPh.outerHTML=`<img class="hero-logo-big" src="${url}">`;
+  if(data.length){
+    const url=data[0].image_url;
+    document.getElementById("logo").innerHTML=`<img src="${url}" width="80">`;
   }
 }
 
-/* =========================
-   GUARDAR LOGO EN PRODUCTS
-========================= */
-let selectedLogoFile=null;
-
-function handleLogoSelect(input){
-  selectedLogoFile=input.files[0];
-}
-
+/* =====================
+   GUARDAR LOGO
+===================== */
 async function saveLogo(){
-  if(!selectedLogoFile){
-    alert("Selecciona imagen");
-    return;
+  const file=document.getElementById("logoInput").files[0];
+  if(!file) return alert("Selecciona imagen");
+
+  const url=await uploadFile(file);
+
+  const existing=await sbFetch("products?name=eq.__LOGO__");
+
+  if(existing.length){
+    await sbFetch(`products?id=eq.${existing[0].id}`,{
+      method:"PATCH",
+      body:JSON.stringify({image_url:url}),
+      prefer:"return=minimal"
+    });
+  }else{
+    await sbFetch("products",{
+      method:"POST",
+      body:JSON.stringify({
+        name:"__LOGO__",
+        category:"config",
+        image_url:url
+      })
+    });
   }
 
-  try{
-    const url=await uploadFile(selectedLogoFile,'productos');
-
-    const existing=await sbFetch("products?name=eq.__LOGO__&select=id",{prefer:''});
-
-    if(existing.length){
-      await sbFetch(`products?id=eq.${existing[0].id}`,{
-        method:'PATCH',
-        body:JSON.stringify({image_url:url}),
-        prefer:'return=minimal'
-      });
-    }else{
-      await sbFetch('products',{
-        method:'POST',
-        body:JSON.stringify({
-          name:'__LOGO__',
-          category:'config',
-          image_url:url
-        })
-      });
-    }
-
-    localStorage.setItem('hq_logo',url);
-    applyLogo(url);
-
-    alert("Logo guardado");
-
-  }catch(e){
-    console.error(e);
-    alert("Error guardando logo");
-  }
+  alert("Logo guardado");
+  loadLogo();
 }
 
-/* =========================
+/* =====================
    PRODUCTOS
-========================= */
+===================== */
 async function loadProducts(){
-  const data=await sbFetch('products?select=*&order=created_at.desc',{prefer:''});
+  const data=await sbFetch("products");
 
-  // 🔥 FILTRA LOGO
-  allProducts=data.filter(p=>p.name!=='__LOGO__');
+  // 🔥 quitar logo
+  allProducts=data.filter(p=>p.name!=="__LOGO__");
 
   renderProducts();
 }
 
 function renderProducts(){
-  const grid=document.getElementById('productsGrid');
-
-  if(!allProducts.length){
-    grid.innerHTML="Sin productos";
-    return;
-  }
+  const grid=document.getElementById("productsGrid");
 
   grid.innerHTML=allProducts.map(p=>`
-    <div>
-      <img src="${p.image_url||''}" width="100%">
+    <div class="card">
+      <img src="${p.image_url||''}">
       <h3>${p.name}</h3>
       <p>${p.price||''}</p>
     </div>
   `).join('');
 }
 
-/* =========================
+/* =====================
    INIT
-========================= */
+===================== */
 loadLogo();
 loadProducts();
+
 </script>
+
+</body>
+</html>
