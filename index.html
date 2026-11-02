@@ -126,6 +126,7 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
 .pwd-box p{color:var(--muted);font-size:13px;margin-bottom:24px}
 .pwd-box input{width:100%;border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;text-align:center;letter-spacing:0.2em;margin-bottom:16px;background:var(--light)}
 .pwd-box input:focus{border-color:var(--gold)}
+.pwd-box input[type=email]{letter-spacing:normal;margin-bottom:10px}
 .pwd-error{color:#C62828;font-size:12px;margin-top:-10px;margin-bottom:12px;display:none}
 .btn-gold{background:var(--dark);color:var(--white);border:none;padding:11px 28px;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;transition:background 0.2s;width:100%}
 .btn-gold:hover{background:var(--gold)}
@@ -311,10 +312,11 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
 <div class="pwd-overlay" id="pwdOverlay">
   <div class="pwd-box">
     <h2>Área Admin</h2>
-    <p>Ingresa tu contraseña para gestionar el catálogo</p>
-    <input type="password" id="pwdInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()">
-    <div class="pwd-error" id="pwdError">Contraseña incorrecta</div>
-    <button class="btn-gold" onclick="checkPwd()">Ingresar</button>
+    <p>Inicia sesión para gestionar el catálogo</p>
+    <input type="email" id="loginEmail" placeholder="correo@ejemplo.com" autocomplete="username" style="letter-spacing:normal" onkeydown="if(event.key==='Enter')document.getElementById('loginPwd').focus()">
+    <input type="password" id="loginPwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="pwd-error" id="pwdError">Correo o contraseña incorrectos</div>
+    <button class="btn-gold" id="btnLogin" onclick="doLogin()">Ingresar</button>
     <button class="btn-outline" onclick="closePwd()">Cancelar</button>
   </div>
 </div>
@@ -328,7 +330,7 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
       <button class="admin-tab active" onclick="switchTab('add',this)">+ Producto</button>
       <button class="admin-tab" onclick="switchTab('list',this)">Mis productos</button>
       <button class="admin-tab" onclick="switchTab('logo',this)">Logo</button>
-      <button class="admin-tab" onclick="switchTab('pwd',this)">Contraseña</button>
+      <button class="admin-tab" onclick="switchTab('pwd',this)">Cuenta</button>
     </div>
     <div class="admin-section active" id="tab-add">
       <div class="form-grid">
@@ -370,10 +372,15 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
     </div>
     <div class="admin-section" id="tab-pwd">
       <div class="cfg-group">
-        <div class="cfg-title">Cambiar contraseña de acceso</div>
+        <div class="cfg-title">Sesión</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Conectado como <strong id="accountEmail"></strong></p>
+        <button class="btn-cancel-sm" onclick="doLogout()">Cerrar sesión</button>
+      </div>
+      <div class="cfg-group">
+        <div class="cfg-title">Cambiar contraseña</div>
         <div class="form-grid">
-          <div class="form-group"><label class="form-label">Nueva contraseña</label><input class="form-input" id="cfgPwd1" type="password" placeholder="Mínimo 6 caracteres"></div>
-          <div class="form-group"><label class="form-label">Confirmar</label><input class="form-input" id="cfgPwd2" type="password" placeholder="Repetir contraseña"></div>
+          <div class="form-group"><label class="form-label">Nueva contraseña</label><input class="form-input" id="cfgPwd1" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"></div>
+          <div class="form-group"><label class="form-label">Confirmar</label><input class="form-input" id="cfgPwd2" type="password" autocomplete="new-password" placeholder="Repetir contraseña"></div>
         </div>
       </div>
       <div class="form-actions"><button class="btn-save" onclick="savePwd()">Cambiar contraseña</button></div>
@@ -384,16 +391,59 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
 <script>
 const SUPABASE_URL = 'https://susqggsvnuipdzcpalvo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1c3FnZ3N2bnVpcGR6Y3BhbHZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDcwNTgsImV4cCI6MjA5MDU4MzA1OH0.fwYEHuMpoJQ_wjQ97mJsEW0M48vGD28N6tZS1a1fayY';
-const PK = 'hq_pwd';
-const getPwd = () => localStorage.getItem(PK) || 'housequeen2025';
 const LOGO_NAME = '__logo__';
+const SESSION_KEY = 'hq_session';
+
+// ── Escapado: todo texto que viene de la base de datos pasa por aquí ──
+const esc = v => String(v == null ? '' : v)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+const safeUrl = u => /^https?:\/\//i.test(String(u || '')) ? esc(u) : '';
+
+// ── Sesión de administrador (Supabase Auth) ──
+let session = null;
+try { session = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (e) { session = null; }
+function storeSession(d) {
+  session = { access_token: d.access_token, refresh_token: d.refresh_token,
+              expires_at: Date.now() + (d.expires_in || 3600) * 1000 - 60000,
+              email: (d.user && d.user.email) || (session && session.email) || '' };
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch (e) {}
+}
+function clearSession() { session = null; try { localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+
+async function authCall(path, body, method) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+    method: method || 'POST',
+    headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json',
+               ...(method === 'PUT' && session ? { 'Authorization': 'Bearer ' + session.access_token } : {}) },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error_description || data.msg || data.message || 'Error de autenticación');
+  return data;
+}
+async function getToken() {
+  if (!session) return null;
+  if (Date.now() < session.expires_at) return session.access_token;
+  try {
+    storeSession(await authCall('token?grant_type=refresh_token', { refresh_token: session.refresh_token }));
+    return session.access_token;
+  } catch (e) { clearSession(); return null; }
+}
+// Para escribir se exige sesión: si no hay, se corta antes de llamar a Supabase
+async function writeHeaders(extra) {
+  const t = await getToken();
+  if (!t) throw new Error('Tu sesión venció. Vuelve a iniciar sesión.');
+  return { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + t, ...extra };
+}
 
 const sbFetch = async (path, opts = {}) => {
+  const isWrite = opts.method && opts.method !== 'GET';
+  const auth = isWrite ? await writeHeaders({}) : { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...opts,
     headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      ...auth,
       'Content-Type': 'application/json',
       'Prefer': opts.prefer || 'return=representation',
       ...opts.headers
@@ -403,6 +453,13 @@ const sbFetch = async (path, opts = {}) => {
   const txt = await res.text();
   return txt ? JSON.parse(txt) : [];
 };
+
+async function uploadFile(file, fname) {
+  const h = await writeHeaders({ 'Content-Type': file.type || 'image/jpeg', 'x-upsert': 'true' });
+  const up = await fetch(`${SUPABASE_URL}/storage/v1/object/productos/${fname}`, { method: 'POST', headers: h, body: file });
+  if (!up.ok) throw new Error(await up.text());
+  return `${SUPABASE_URL}/storage/v1/object/public/productos/${fname}`;
+}
 
 let allProducts = [], currentCat = 'todos', currentSearch = '', currentSort = 'default', currentView = 'grid';
 let editId = null, selectedFile = null, currentImgUrl = null, selectedLogoFile = null;
@@ -436,7 +493,7 @@ async function loadLogo() {
 function setLogoDropPreview(url) {
   const zone = document.getElementById('logoDropZone');
   if (!zone || !url) return;
-  zone.innerHTML = '<img src="' + url + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:50%"><div style="position:absolute;bottom:4px;right:4px;background:rgba(26,18,8,0.75);color:#C9A84C;font-size:9px;padding:2px 8px;border-radius:2px">Cambiar</div>';
+  zone.innerHTML = '<img src="' + safeUrl(url) + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:50%"><div style="position:absolute;bottom:4px;right:4px;background:rgba(26,18,8,0.75);color:#C9A84C;font-size:9px;padding:2px 8px;border-radius:2px">Cambiar</div>';
 }
 
 function handleLogoSelect(input) {
@@ -464,20 +521,9 @@ async function saveLogo() {
   btn.innerHTML = '<span class="spinner"></span>Subiendo...';
   document.getElementById('logoStatusMsg').style.display = 'none';
   try {
-    const ext = selectedLogoFile.name.split('.').pop();
+    const ext = (selectedLogoFile.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '');
     const fname = 'logo_' + Date.now() + '.' + ext;
-    const upRes = await fetch(`${SUPABASE_URL}/storage/v1/object/productos/${fname}`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': selectedLogoFile.type || 'image/jpeg',
-        'x-upsert': 'true'
-      },
-      body: selectedLogoFile
-    });
-    if (!upRes.ok) throw new Error(await upRes.text());
-    const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/productos/${fname}`;
+    const imageUrl = await uploadFile(selectedLogoFile, fname);
 
     const existing = await sbFetch(`products?name=eq.${LOGO_NAME}&select=id`, { prefer: '' });
     if (existing.length) {
@@ -525,7 +571,7 @@ async function loadProducts() {
 function renderProducts() {
   let prods = [...allProducts];
   if (currentCat !== 'todos') prods = prods.filter(p => p.category === currentCat);
-  if (currentSearch) prods = prods.filter(p => (p.name + p.description + p.category).toLowerCase().includes(currentSearch.toLowerCase()));
+  if (currentSearch) prods = prods.filter(p => ((p.name || '') + (p.description || '') + (p.category || '')).toLowerCase().includes(currentSearch.toLowerCase()));
   if (currentSort === 'name') prods.sort((a, b) => a.name.localeCompare(b.name));
   if (currentSort === 'price') prods.sort((a, b) => {
     const pa = parseFloat((a.price || '0').replace(/[^0-9.]/g, '')),
@@ -549,25 +595,27 @@ function renderProducts() {
   grid.innerHTML = prods.map(p => {
     const waMsg = encodeURIComponent('Hola House Queen! Me interesa: ' + p.name + (p.price ? ' (' + p.price + ')' : ''));
     const waUrl = 'https://wa.me/573168003988?text=' + waMsg;
-    const sCls = 'status-' + (p.status || 'Disponible').replace(' ', '-');
-    const bCls = p.status === 'Bajo pedido' ? 'badge-pedido' : p.status === 'Agotado' ? 'badge-agotado' : '';
+    const status = ['Disponible', 'Bajo pedido', 'Agotado'].includes(p.status) ? p.status : 'Disponible';
+    const sCls = 'status-' + status.replace(' ', '-');
+    const bCls = status === 'Bajo pedido' ? 'badge-pedido' : status === 'Agotado' ? 'badge-agotado' : '';
+    const img = safeUrl(p.image_url);
     return '<div class="product-card">' +
       '<div class="product-image-wrap">' +
-      (p.status !== 'Disponible' ? '<span class="product-badge ' + bCls + '">' + p.status + '</span>' : '') +
-      (p.image_url
-        ? '<img class="product-img" src="' + p.image_url + '" alt="' + p.name + '" loading="lazy">'
+      (status !== 'Disponible' ? '<span class="product-badge ' + bCls + '">' + esc(status) + '</span>' : '') +
+      (img
+        ? '<img class="product-img" src="' + img + '" alt="' + esc(p.name) + '" loading="lazy">'
         : '<div class="product-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Sin imagen</span></div>') +
       '<div class="product-overlay">' +
-      '<button class="product-wa-btn" onclick="window.open(\'' + waUrl + '\',\'_blank\')">' +
+      '<a class="product-wa-btn" href="' + esc(waUrl) + '" target="_blank" rel="noopener" style="text-decoration:none">' +
       '<svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' +
-      'Pedir información</button></div></div>' +
+      'Pedir información</a></div></div>' +
       '<div class="product-info">' +
-      '<span class="product-cat">' + (p.category || '') + '</span>' +
-      '<h3 class="product-name">' + p.name + '</h3>' +
-      (p.description ? '<p class="product-desc">' + p.description + '</p>' : '') +
+      '<span class="product-cat">' + esc(p.category || '') + '</span>' +
+      '<h3 class="product-name">' + esc(p.name) + '</h3>' +
+      (p.description ? '<p class="product-desc">' + esc(p.description) + '</p>' : '') +
       '<div class="product-footer">' +
-      '<span class="product-price">' + (p.price || 'Consultar precio') + '</span>' +
-      '<span class="product-status ' + sCls + '">' + (p.status || 'Disponible') + '</span>' +
+      '<span class="product-price">' + esc(p.price || 'Consultar precio') + '</span>' +
+      '<span class="product-status ' + sCls + '">' + esc(status) + '</span>' +
       '</div></div></div>';
   }).join('');
 }
@@ -575,10 +623,16 @@ function renderProducts() {
 function renderCatMenu() {
   const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
   const menu = document.getElementById('catMenu');
-  menu.innerHTML = '<button class="cat-btn ' + (currentCat === 'todos' ? 'active' : '') + '" onclick="filterCat(\'todos\',this)">Todos</button>';
-  cats.forEach(c => {
-    menu.innerHTML += '<button class="cat-btn ' + (currentCat === c ? 'active' : '') + '" onclick="filterCat(\'' + c + '\',this)">' + c + '</button>';
-  });
+  menu.innerHTML = '';
+  const mk = (label, cat) => {
+    const b = document.createElement('button');
+    b.className = 'cat-btn' + (currentCat === cat ? ' active' : '');
+    b.textContent = label;
+    b.addEventListener('click', () => filterCat(cat, b));
+    menu.appendChild(b);
+  };
+  mk('Todos', 'todos');
+  cats.forEach(c => mk(c, c));
 }
 
 function filterCat(cat, btn) { currentCat = cat; currentSearch = ''; document.getElementById('searchInput').value = ''; document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderProducts(); }
@@ -587,10 +641,40 @@ function sortProducts(val) { currentSort = val; renderProducts(); }
 function setView(v) { currentView = v; document.getElementById('productsGrid').classList.toggle('list-view', v === 'list'); document.getElementById('btnGrid').classList.toggle('active', v === 'grid'); document.getElementById('btnList').classList.toggle('active', v === 'list'); }
 
 // AUTH
-window.openAdmin = function() { document.getElementById('pwdOverlay').classList.add('open'); document.getElementById('pwdInput').value = ''; document.getElementById('pwdError').style.display = 'none'; setTimeout(() => document.getElementById('pwdInput').focus(), 100); }
-window.closePwd = function() { document.getElementById('pwdOverlay').classList.remove('open'); }
-window.checkPwd = function() { if (document.getElementById('pwdInput').value === getPwd()) { closePwd(); document.getElementById('adminOverlay').classList.add('open'); loadAdminList(); } else { document.getElementById('pwdError').style.display = 'block'; document.getElementById('pwdInput').value = ''; document.getElementById('pwdInput').focus(); } }
-window.closeAdmin = function() { document.getElementById('adminOverlay').classList.remove('open'); }
+window.openAdmin = async function() {
+  if (await getToken()) { showAdmin(); return; }
+  document.getElementById('pwdOverlay').classList.add('open');
+  document.getElementById('loginPwd').value = '';
+  document.getElementById('pwdError').style.display = 'none';
+  setTimeout(() => document.getElementById('loginEmail').focus(), 100);
+};
+window.closePwd = function() { document.getElementById('pwdOverlay').classList.remove('open'); };
+function showAdmin() {
+  closePwd();
+  document.getElementById('accountEmail').textContent = (session && session.email) || '';
+  document.getElementById('adminOverlay').classList.add('open');
+  loadAdminList();
+}
+window.doLogin = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pwd = document.getElementById('loginPwd').value;
+  const err = document.getElementById('pwdError');
+  const btn = document.getElementById('btnLogin');
+  if (!email || !pwd) { err.textContent = 'Escribe tu correo y contraseña'; err.style.display = 'block'; return; }
+  btn.disabled = true;
+  try {
+    storeSession(await authCall('token?grant_type=password', { email, password: pwd }));
+    document.getElementById('loginPwd').value = '';
+    showAdmin();
+  } catch (e) {
+    err.textContent = 'Correo o contraseña incorrectos';
+    err.style.display = 'block';
+    document.getElementById('loginPwd').value = '';
+    document.getElementById('loginPwd').focus();
+  } finally { btn.disabled = false; }
+};
+window.doLogout = function() { clearSession(); closeAdmin(); showToast('Sesión cerrada'); };
+window.closeAdmin = function() { document.getElementById('adminOverlay').classList.remove('open'); };
 
 function switchTab(tab, btn) {
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -631,16 +715,9 @@ async function saveProduct() {
   try {
     let imageUrl = currentImgUrl;
     if (selectedFile) {
-      try {
-        const ext = selectedFile.name.split('.').pop();
-        const fname = Date.now() + '_' + Math.random().toString(36).substr(2, 5) + '.' + ext;
-        const up = await fetch(`${SUPABASE_URL}/storage/v1/object/productos/${fname}`, {
-          method: 'POST',
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': selectedFile.type, 'x-upsert': 'true' },
-          body: selectedFile
-        });
-        if (up.ok) imageUrl = `${SUPABASE_URL}/storage/v1/object/public/productos/${fname}`;
-      } catch (e) { showToast('Foto no pudo subirse, guardando sin imagen'); }
+      const ext = (selectedFile.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const fname = Date.now() + '_' + Math.random().toString(36).slice(2, 7) + '.' + ext;
+      imageUrl = await uploadFile(selectedFile, fname);
     }
     const data = { name, category: document.getElementById('pCat').value, description: document.getElementById('pDesc').value.trim(), price: document.getElementById('pPrice').value.trim(), status: document.getElementById('pStatus').value, image_url: imageUrl };
     if (editId) { await sbFetch(`products?id=eq.${editId}`, { method: 'PATCH', body: JSON.stringify(data), prefer: 'return=minimal' }); showToast('Producto actualizado ✓'); }
@@ -657,16 +734,19 @@ async function loadAdminList() {
     const prods = await sbFetch('products?select=*&order=created_at.desc', { prefer: '' });
     const visible = prods.filter(p => p.name !== LOGO_NAME && p.category !== '__system__');
     if (!visible.length) { list.innerHTML = '<div class="no-items">No hay productos aún.</div>'; return; }
-    list.innerHTML = visible.map(p => '<div class="admin-item">' +
-      (p.image_url ? '<img src="' + p.image_url + '" class="admin-thumb" alt="' + p.name + '">' : '<div class="admin-thumb-ph"><svg width="18" height="18" fill="none" stroke="var(--muted)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>') +
-      '<div class="admin-info"><strong>' + p.name + '</strong><span>' + (p.category || '') + ' · ' + (p.price || 'Sin precio') + ' · ' + (p.status || 'Disponible') + '</span></div>' +
-      '<div class="admin-actions"><button class="btn-edit" onclick="editProduct(\'' + p.id + '\')">Editar</button><button class="btn-del" onclick="deleteProduct(\'' + p.id + '\')">Eliminar</button></div>' +
-      '</div>').join('');
+    list.innerHTML = visible.map(p => {
+      const img = safeUrl(p.image_url);
+      return '<div class="admin-item">' +
+      (img ? '<img src="' + img + '" class="admin-thumb" alt="' + esc(p.name) + '">' : '<div class="admin-thumb-ph"><svg width="18" height="18" fill="none" stroke="var(--muted)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>') +
+      '<div class="admin-info"><strong>' + esc(p.name) + '</strong><span>' + esc(p.category || '') + ' · ' + esc(p.price || 'Sin precio') + ' · ' + esc(p.status || 'Disponible') + '</span></div>' +
+      '<div class="admin-actions"><button class="btn-edit" data-id="' + esc(p.id) + '" onclick="editProduct(this.dataset.id)">Editar</button><button class="btn-del" data-id="' + esc(p.id) + '" onclick="deleteProduct(this.dataset.id)">Eliminar</button></div>' +
+      '</div>';
+    }).join('');
   } catch (e) { list.innerHTML = '<div class="no-items">Error cargando productos.</div>'; }
 }
 
 async function editProduct(id) {
-  const p = allProducts.find(x => x.id === id) || (await sbFetch(`products?id=eq.${id}`, { prefer: '' }))[0];
+  const p = allProducts.find(x => String(x.id) === String(id)) || (await sbFetch(`products?id=eq.${id}`, { prefer: '' }))[0];
   if (!p) return;
   editId = id; selectedFile = null; currentImgUrl = p.image_url || null;
   document.getElementById('pName').value = p.name;
@@ -674,7 +754,7 @@ async function editProduct(id) {
   document.getElementById('pDesc').value = p.description || '';
   document.getElementById('pPrice').value = p.price || '';
   document.getElementById('pStatus').value = p.status || 'Disponible';
-  if (p.image_url) document.getElementById('imgDrop').innerHTML = '<img src="' + p.image_url + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:2px"><div style="position:absolute;bottom:8px;right:8px;background:rgba(26,18,8,0.75);color:#C9A84C;font-size:10px;padding:4px 10px;border-radius:2px">Cambiar foto</div>';
+  if (safeUrl(p.image_url)) document.getElementById('imgDrop').innerHTML = '<img src="' + safeUrl(p.image_url) + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:2px"><div style="position:absolute;bottom:8px;right:8px;background:rgba(26,18,8,0.75);color:#C9A84C;font-size:10px;padding:4px 10px;border-radius:2px">Cambiar foto</div>';
   document.querySelectorAll('.admin-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
   document.querySelectorAll('.admin-section').forEach((s, i) => s.classList.toggle('active', i === 0));
 }
@@ -685,14 +765,17 @@ async function deleteProduct(id) {
   catch (e) { showToast('Error al eliminar'); }
 }
 
-function savePwd() {
+async function savePwd() {
   const p1 = document.getElementById('cfgPwd1').value, p2 = document.getElementById('cfgPwd2').value;
   if (!p1) { showToast('Escribe una contraseña'); return; }
   if (p1 !== p2) { showToast('Las contraseñas no coinciden'); return; }
-  if (p1.length < 6) { showToast('Mínimo 6 caracteres'); return; }
-  localStorage.setItem(PK, p1);
-  document.getElementById('cfgPwd1').value = ''; document.getElementById('cfgPwd2').value = '';
-  showToast('Contraseña actualizada ✓');
+  if (p1.length < 8) { showToast('Mínimo 8 caracteres'); return; }
+  try {
+    await getToken();
+    await authCall('user', { password: p1 }, 'PUT');
+    document.getElementById('cfgPwd1').value = ''; document.getElementById('cfgPwd2').value = '';
+    showToast('Contraseña actualizada ✓');
+  } catch (e) { showToast('No se pudo cambiar: ' + (e.message || 'intenta de nuevo')); }
 }
 
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
