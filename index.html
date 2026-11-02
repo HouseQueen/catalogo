@@ -254,6 +254,35 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
 .bulk-note{font-size:12.5px;color:var(--muted);line-height:1.7;margin-bottom:16px}
 .chk{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);line-height:1.5;cursor:pointer}
 .chk input{margin-top:3px}
+.btn-ghost{display:inline-block;margin-left:10px;background:transparent;color:var(--dark);border:1px solid var(--dark);padding:12px 26px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-ghost:hover{background:var(--dark);color:var(--white)}
+.size-open{display:block;margin:6px 0 0;color:#8A6B12;font-size:12.5px;text-decoration:underline;background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0}
+.size-chip{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:var(--dark);color:#C9A84C;border:none;border-radius:20px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.size-chip[hidden]{display:none}
+.sizebox{max-width:620px}
+.size-tabs{display:flex;gap:6px;margin:18px 0 16px;border-bottom:1px solid var(--border)}
+.size-tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:9px 14px;font-size:12px;letter-spacing:0.06em;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;margin-bottom:-1px}
+.size-tab.active{color:#8A6B12;border-bottom-color:var(--gold)}
+.bed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:10px}
+.bed-card{text-align:left;background:var(--white);border:1px solid var(--border2);border-radius:3px;padding:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.bed-card:hover{border-color:var(--gold)}
+.bed-card.active{border-color:var(--gold);background:var(--gold-pale)}
+.bed-ico{display:block;height:28px;max-width:100%;border:1.5px solid var(--gold);border-radius:3px;margin-bottom:10px;background:linear-gradient(var(--gold-pale),var(--gold-pale)) 5px 4px/9px 7px no-repeat}
+.bed-card strong{display:block;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--dark);line-height:1.1}
+.bed-card .dim{display:block;font-size:12px;color:var(--text);margin-top:2px}
+.bed-card small{display:block;font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+.size-howto{font-size:12.5px;color:var(--muted);line-height:1.7;margin-bottom:14px;background:var(--light);padding:10px 12px;border-radius:2px}
+.size-form{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.size-form .form-input{width:100%}
+.size-result{margin-top:20px;border:1px solid var(--gold-border);background:var(--gold-pale);border-radius:3px;padding:18px 18px 16px}
+.size-result .lbl{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A6B12}
+.size-result .name{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--dark);line-height:1.1;margin:2px 0 4px}
+.size-result p{font-size:13.5px;color:var(--text);line-height:1.7;margin-top:6px}
+.size-result p.warn{color:#7A4B00}
+.size-result .fine{font-size:11.5px;color:var(--muted)}
+.size-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.size-actions .btn-save,.size-actions .btn-wa-send{flex:1 1 180px;margin-top:0;width:auto;text-align:center;text-decoration:none;justify-content:center}
+@media(max-width:640px){.size-form{grid-template-columns:1fr 1fr}.btn-ghost{margin:10px 0 0 0}}
 @media (hover:none){.product-overlay{opacity:1;background:none}}
 @media(max-width:640px){
   .nav-top{padding:12px 4%;flex-wrap:wrap}.nav-search{order:3;max-width:100%;flex:1 1 100%}
@@ -318,6 +347,7 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
     <div class="hero-div"><div class="hero-div-line"></div><div class="hero-div-txt">Comercializadora House Queen</div></div>
     <p>Descubre nuestra selección de lencería para el hogar. Calidad, confort y estilo en cada pieza.</p>
     <a href="#catalogo" class="btn-hero">Ver catálogo</a>
+    <button type="button" class="btn-ghost" onclick="openSize()">¿Qué sábana necesito?</button>
   </div>
 </section>
 
@@ -326,6 +356,8 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
     <div class="catalog-header-left">
       <h2 id="catalogTitle">Todos los productos</h2>
       <p id="catalogCount">Cargando productos...</p>
+      <button type="button" class="size-open" onclick="openSize()">¿Qué sábana necesito? Encuentra tu talla</button>
+      <button type="button" class="size-chip" id="sizeChip" hidden onclick="clearSize()"></button>
     </div>
     <div class="catalog-controls">
       <select class="sort-select" onchange="sortProducts(this.value)">
@@ -433,7 +465,7 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
         </div>
         <div class="form-group"><label class="form-label">Nombre del producto *</label><input class="form-input" id="pName" placeholder="Ej: Sábanas Premium 200 hilos"></div>
         <div class="form-group"><label class="form-label">Categoría</label><select class="form-select" id="pCat"><option>Ropa de cama</option><option>Toallas</option><option>Cortinas</option><option>Almohadas</option><option>Edredones</option><option>Cobijas</option><option>Accesorios</option><option>Otro</option></select></div>
-        <div class="form-group full"><label class="form-label">Descripción</label><textarea class="form-textarea" id="pDesc" placeholder="Materiales, medidas disponibles, colores..."></textarea></div>
+        <div class="form-group full"><label class="form-label">Descripción</label><textarea class="form-textarea" id="pDesc" placeholder="Materiales, medidas (Sencilla, Doble, Queen, King...), colores..."></textarea></div>
         <div class="form-group"><label class="form-label">Precio de referencia</label><input class="form-input" id="pPrice" placeholder="Ej: $60.000 COP"></div>
         <div class="form-group"><label class="form-label">Disponibilidad</label><select class="form-select" id="pStatus"><option value="Disponible">Disponible</option><option value="Bajo pedido">Bajo pedido</option><option value="Agotado">Agotado</option></select></div>
       </div>
@@ -533,6 +565,30 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
   </div>
 </div>
 
+<div class="layer" id="sizeLayer">
+  <div class="priv sizebox" role="dialog" aria-modal="true" aria-labelledby="sizeTitle">
+    <button class="x-btn" onclick="closeSize()" aria-label="Cerrar">×</button>
+    <h2 id="sizeTitle">¿Qué sábana necesito?</h2>
+    <p class="priv-date">Te ayudamos a encontrar la talla de tu cama.</p>
+    <div class="size-tabs">
+      <button type="button" class="size-tab active" id="tabBed" onclick="sizeMode('bed')">Elijo mi cama</button>
+      <button type="button" class="size-tab" id="tabMeasure" onclick="sizeMode('measure')">Tengo las medidas</button>
+    </div>
+    <div id="paneBed"><div class="bed-grid" id="bedGrid"></div></div>
+    <div id="paneMeasure" hidden>
+      <p class="size-howto">Mide tu colchón sin sábanas, con un metro: el <strong>ancho</strong>, el <strong>largo</strong> y el <strong>alto</strong> (desde la base hasta la parte de arriba). Puedes escribir las medidas en centímetros o en metros (por ejemplo 160 o 1,6).</p>
+      <div class="size-form">
+        <div class="form-group"><label class="form-label" for="mAncho">Ancho</label><input class="form-input" id="mAncho" inputmode="decimal" placeholder="Ej: 160" onkeydown="if(event.key==='Enter')recommendFromMeasures()"></div>
+        <div class="form-group"><label class="form-label" for="mLargo">Largo</label><input class="form-input" id="mLargo" inputmode="decimal" placeholder="Ej: 190" onkeydown="if(event.key==='Enter')recommendFromMeasures()"></div>
+        <div class="form-group"><label class="form-label" for="mAlto">Alto (opcional)</label><input class="form-input" id="mAlto" inputmode="decimal" placeholder="Ej: 28" onkeydown="if(event.key==='Enter')recommendFromMeasures()"></div>
+      </div>
+      <label class="chk" style="margin-bottom:14px"><input type="checkbox" id="mTopper"> Uso topper o protector grueso encima del colchón</label>
+      <button type="button" class="btn-save" onclick="recommendFromMeasures()">Ver recomendación</button>
+    </div>
+    <div id="sizeResult" aria-live="polite"></div>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://susqggsvnuipdzcpalvo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1c3FnZ3N2bnVpcGR6Y3BhbHZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDcwNTgsImV4cCI6MjA5MDU4MzA1OH0.fwYEHuMpoJQ_wjQ97mJsEW0M48vGD28N6tZS1a1fayY';
@@ -628,6 +684,7 @@ async function uploadFile(file, fname) {
 }
 
 let allProducts = [], currentCat = 'todos', currentSearch = '', currentSort = 'default', currentView = 'grid';
+let currentSize = null;
 let editId = null, selectedFile = null, currentImgUrl = null, selectedLogoFile = null;
 let currentLogoUrl = null; // ✅ FIX: variable global para URL del logo actual
 
@@ -762,6 +819,8 @@ function renderProducts() {
   let prods = [...allProducts];
   if (currentCat !== 'todos') prods = prods.filter(p => p.category === currentCat);
   if (currentSearch) prods = prods.filter(p => ((p.name || '') + (p.description || '') + (p.category || '')).toLowerCase().includes(currentSearch.toLowerCase()));
+  if (currentSize) prods = prods.filter(p => matchesSize(p, currentSize));
+  updateSizeChip();
   if (currentSort === 'name') prods.sort((a, b) => a.name.localeCompare(b.name));
   if (currentSort === 'price') prods.sort((a, b) => {
     const pa = parsePrice(a.price), pb = parsePrice(b.price);
@@ -778,7 +837,7 @@ function renderProducts() {
 
   const grid = document.getElementById('productsGrid');
   if (prods.length === 0) {
-    grid.innerHTML = '<div class="empty-state"><svg width="52" height="52" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><strong>' + (allProducts.length === 0 ? '¡Agrega tu primer producto!' : 'Sin resultados') + '</strong><p>' + (allProducts.length === 0 ? 'Entra al panel Admin para comenzar' : 'Prueba con otra categoría o búsqueda') + '</p></div>';
+    grid.innerHTML = '<div class="empty-state"><svg width="52" height="52" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><strong>' + (allProducts.length === 0 ? '¡Agrega tu primer producto!' : 'Sin resultados') + '</strong><p>' + (allProducts.length === 0 ? 'Entra al panel Admin para comenzar' : (currentSize ? 'Ningún producto menciona la medida ' + currentSize + '. Quita el filtro de medida de arriba.' : 'Prueba con otra categoría o búsqueda')) + '</p></div>';
     return;
   }
 
@@ -1038,7 +1097,7 @@ async function savePwd() {
 }
 
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAdmin(); closePwd(); closeCart(); closePriv(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAdmin(); closePwd(); closeCart(); closePriv(); closeSize(); } });
 
 // ── PEDIDO (CARRITO) POR WHATSAPP ──
 const WA = '573168003988';
@@ -1139,6 +1198,109 @@ document.getElementById('cartItems').addEventListener('change', e => {
   it.qty = Math.min(999, v); saveCart(); updateCartBadge(); renderCart();
 });
 document.getElementById('cartLayer').addEventListener('click', e => { if (e.target.id === 'cartLayer') closeCart(); });
+
+// ── ASISTENTE "¿QUÉ SÁBANA NECESITO?" ──
+// Medidas estándar de colchones en Colombia (ancho x largo, cm). "ws" = anchos conocidos de esa talla.
+const SIZES = [
+  { key: 'Sencilla',  w: 100, l: 190, ws: [90, 100], who: '1 persona',
+    kw: ['sencilla', 'sencillo', 'individual'], dims: ['100x190', '90x190'] },
+  { key: 'Semidoble', w: 120, l: 190, ws: [120], who: '1 persona con más espacio',
+    kw: ['semidoble'], dims: ['120x190'] },
+  { key: 'Doble',     w: 140, l: 190, ws: [140], who: '2 personas (ajustadas) o 1 con mucho espacio',
+    kw: ['doble', 'matrimonial'], dims: ['140x190'] },
+  { key: 'Queen',     w: 160, l: 190, ws: [160], who: '2 personas, cómodas',
+    kw: ['queen', 'extradoble'], dims: ['160x190', '160x200'] },
+  { key: 'King',      w: 200, l: 200, ws: [180, 200], who: '2 personas, con mucho espacio',
+    kw: ['king'], dims: ['200x200', '180x200'] }
+];
+const LET = 'a-záéíóúñ';
+const hasWord = (t, w) => new RegExp('(^|[^' + LET + '])' + w + 's?([^' + LET + ']|$)', 'i').test(t);
+function matchesSize(p, key) {
+  const sz = SIZES.find(x => x.key === key); if (!sz) return true;
+  const t = ((p.name || '') + ' ' + (p.description || '') + ' ' + (p.category || '')).toLowerCase()
+    .replace(/extra[\s-]*doble/g, 'extradoble').replace(/semi[\s-]*doble/g, 'semidoble');
+  if (sz.kw.some(w => hasWord(t, w))) return true;
+  const compact = t.replace(/\s*[x×]\s*/g, 'x');
+  return sz.dims.some(d => compact.includes(d));
+}
+function updateSizeChip() {
+  const c = document.getElementById('sizeChip'); if (!c) return;
+  c.hidden = !currentSize;
+  c.textContent = currentSize ? 'Medida: ' + currentSize + '  ✕' : '';
+}
+function clearSize() { currentSize = null; renderProducts(); }
+
+function renderBeds() {
+  const g = document.getElementById('bedGrid'); g.innerHTML = '';
+  SIZES.forEach(sz => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bed-card'; b.dataset.key = sz.key;
+    b.innerHTML = '<span class="bed-ico" style="width:' + Math.round(sz.w / 3.4) + 'px"></span>' +
+      '<strong>' + sz.key + '</strong><span class="dim">' + sz.w + ' × ' + sz.l + ' cm</span><small>' + sz.who + '</small>';
+    b.addEventListener('click', () => {
+      g.querySelectorAll('.bed-card').forEach(x => x.classList.toggle('active', x === b));
+      showSizeResult(sz, { notes: [] });
+    });
+    g.appendChild(b);
+  });
+}
+function sizeMode(m) {
+  document.getElementById('paneBed').hidden = m !== 'bed';
+  document.getElementById('paneMeasure').hidden = m !== 'measure';
+  document.getElementById('tabBed').classList.toggle('active', m === 'bed');
+  document.getElementById('tabMeasure').classList.toggle('active', m === 'measure');
+  document.getElementById('sizeResult').innerHTML = '';
+}
+const toCm = v => { const n = parseFloat(String(v).replace(',', '.')); return !n || n <= 0 ? 0 : (n < 5 ? Math.round(n * 100) : Math.round(n)); };
+
+function recommendFromMeasures() {
+  let a = toCm(document.getElementById('mAncho').value), l = toCm(document.getElementById('mLargo').value);
+  const hRaw = parseFloat(String(document.getElementById('mAlto').value).replace(',', '.')) || 0;
+  let h = hRaw > 0 && hRaw < 2 ? Math.round(hRaw * 100) : Math.round(hRaw);
+  if (!a || !l || a < 60 || a > 300 || l < 100 || l > 300) { showToast('Revisa el ancho y el largo (en centímetros)'); return; }
+  if (a > l) [a, l] = [l, a];
+  const ranked = SIZES.map(sz => ({ sz, d: Math.min(...sz.ws.map(w => Math.abs(w - a))) }))
+    .sort((x, y) => x.d - y.d || y.sz.w - x.sz.w);
+  const best = ranked[0], second = ranked[1];
+  const notes = [], warns = [];
+  if (best.d > 6) warns.push('Tu colchón mide ' + a + ' cm de ancho y no coincide con una talla estándar: queda entre ' + best.sz.key + ' y ' + second.sz.key +
+    '. Te recomendamos ' + best.sz.key + ', pero confírmalo con nosotros por WhatsApp antes de comprar.');
+  else notes.push('Tu colchón de ' + a + ' × ' + l + ' cm corresponde a la talla ' + best.sz.key + '.');
+  if (l > 205) warns.push('Tu colchón es más largo que el estándar (190–200 cm): puede necesitar una medida especial. Consúltanos.');
+  if (l < 180) warns.push('Tu colchón es más corto que el estándar (190 cm): puede necesitar una medida especial. Consúltanos.');
+  if (h > 0) {
+    const eff = h + (document.getElementById('mTopper').checked ? 5 : 0);
+    const withTop = eff !== h ? ' (' + h + ' cm + 5 cm del topper)' : '';
+    if (eff <= 25) notes.push('Con ' + eff + ' cm de alto' + withTop + ' te sirve una sábana ajustable estándar (bolsillo de hasta unos 25 cm).');
+    else if (eff <= 30) notes.push('Con ' + eff + ' cm de alto' + withTop + ' necesitas una sábana ajustable de bolsillo profundo (30 cm).');
+    else if (eff <= 38) notes.push('Con ' + eff + ' cm de alto' + withTop + ' necesitas una sábana ajustable de bolsillo extra profundo (35 a 38 cm).');
+    else warns.push('Con ' + eff + ' cm de alto' + withTop + ' tu colchón es muy alto: escríbenos para confirmar qué sábana le queda.');
+  } else notes.push('Si tu colchón mide más de 25 cm de alto, pide la sábana ajustable de bolsillo profundo.');
+  showSizeResult(best.sz, { a, l, h, notes, warns });
+}
+
+function showSizeResult(sz, info) {
+  const n = allProducts.filter(p => matchesSize(p, sz.key)).length;
+  const box = document.getElementById('sizeResult');
+  const measured = info.a ? 'Mi colchón mide ' + info.a + ' x ' + info.l + ' cm' + (info.h ? ', de ' + info.h + ' cm de alto' : '') + '. ' : '';
+  const wa = 'https://wa.me/' + WA + '?text=' + encodeURIComponent('Hola House Queen! Necesito ayuda para elegir sábanas. ' + measured + 'Mi cama es talla ' + sz.key + ' (' + sz.w + ' x ' + sz.l + ' cm). ¿Qué opciones tienen?');
+  box.innerHTML = '<div class="size-result">' +
+    '<div class="lbl">Te recomendamos</div><div class="name">Talla ' + sz.key + '</div>' +
+    '<p>Medida estándar: ' + sz.w + ' × ' + sz.l + ' cm · Ideal para ' + sz.who + '.</p>' +
+    (info.notes || []).map(t => '<p>' + esc(t) + '</p>').join('') +
+    (info.warns || []).map(t => '<p class="warn">⚠ ' + esc(t) + '</p>').join('') +
+    '<p class="fine">' + (n ? 'Encontramos ' + n + ' producto' + (n !== 1 ? 's que mencionan' : ' que menciona') + ' esta medida.' : 'Aún no vemos productos con esta medida escrita en el catálogo: escríbenos y te ayudamos.') +
+    ' Las medidas pueden variar unos centímetros según el fabricante.</p>' +
+    '<div class="size-actions">' + (n ? '<button type="button" class="btn-save" onclick="showSizeProducts(\'' + sz.key + '\')">Ver productos talla ' + sz.key + '</button>' : '') +
+    '<a class="btn-wa-send" href="' + esc(wa) + '" target="_blank" rel="noopener">Preguntar por WhatsApp</a></div></div>';
+}
+function showSizeProducts(key) {
+  currentSize = key; closeSize(); renderProducts();
+  document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' });
+}
+function openSize() { renderBeds(); sizeMode('bed'); document.getElementById('sizeLayer').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeSize() { document.getElementById('sizeLayer').classList.remove('open'); document.body.style.overflow = ''; }
+document.getElementById('sizeLayer').addEventListener('click', e => { if (e.target.id === 'sizeLayer') closeSize(); });
 
 // INIT
 document.getElementById('bCat').innerHTML = document.getElementById('pCat').innerHTML;
