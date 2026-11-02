@@ -227,6 +227,33 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
 .btn-wa-send:disabled{opacity:0.5;cursor:not-allowed}
 .btn-link{background:transparent;border:none;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;margin-top:10px;font-family:'DM Sans',sans-serif}
 @media(max-width:640px){.toast{left:16px;right:16px;top:14px;bottom:auto;max-width:none;transform:translateY(-30px)}.nav-actions{gap:8px}.nav-cart .cart-label{display:none}}
+.contact-note{font-size:12px;color:#8A7A58;max-width:230px;text-align:center;line-height:1.5;margin-top:-4px}
+footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:underline}
+.priv{margin:auto;background:var(--white);width:calc(100% - 32px);max-width:640px;max-height:calc(100vh - 32px);overflow-y:auto;border-radius:4px;padding:34px 30px 30px;position:relative}
+.priv .x-btn{position:absolute;top:8px;right:8px}
+.priv h2{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:500;color:var(--dark);margin-bottom:4px}
+.priv h3{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin:20px 0 6px;font-weight:500}
+.priv p,.priv li{font-size:13.5px;color:var(--text);line-height:1.75}
+.priv ul{padding-left:20px}
+.priv .priv-date{font-size:12px;color:var(--muted)}
+.qty input{width:46px;height:30px;border:none;border-left:1px solid var(--border2);border-right:1px solid var(--border2);text-align:center;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);-moz-appearance:textfield;outline:none;border-radius:0}
+.qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.qty input:focus{background:var(--gold-pale)}
+.cart-total{font-size:12px;color:var(--muted);text-align:right;padding:14px 0 6px}
+.drawer-foot .form-input{width:100%;margin-bottom:10px}
+.btn-copy{display:block;width:100%;background:transparent;border:1px solid var(--border2);color:var(--dark);padding:11px;border-radius:2px;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;transition:all 0.2s}
+.btn-copy:hover{border-color:var(--gold);color:var(--gold)}
+.admin-item{flex-wrap:wrap}
+.admin-item .admin-info{min-width:150px}
+.admin-item.is-hidden{opacity:0.65;background:#EFEADD}
+.admin-actions{flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.admin-info .tag-hidden{display:inline-block;background:var(--dark);color:#C9A84C;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 8px;border-radius:2px;margin-left:8px;vertical-align:middle}
+.st-sel{border:1px solid var(--border2);border-radius:2px;padding:5px 6px;font-size:11px;font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);cursor:pointer}
+.btn-hide{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:5px 12px;border-radius:2px;cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif}
+.btn-hide:hover{background:var(--gold-pale);color:var(--gold)}
+.bulk-note{font-size:12.5px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.chk{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);line-height:1.5;cursor:pointer}
+.chk input{margin-top:3px}
 @media (hover:none){.product-overlay{opacity:1;background:none}}
 @media(max-width:640px){
   .nav-top{padding:12px 4%;flex-wrap:wrap}.nav-search{order:3;max-width:100%;flex:1 1 100%}
@@ -344,6 +371,18 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
       <span class="contact-val">Bogotá, Colombia</span>
     </div>
     <div class="contact-item">
+      <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.5" width="18" height="18"><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 15.5,14"/></svg></div>
+      <span class="contact-label">Horario de atención</span>
+      <span class="contact-val">Lunes a sábado · 7:00 a. m. – 5:00 p. m.</span>
+      <span class="contact-note">Domingos y festivos no hay atención</span>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.5" width="18" height="18"><rect x="1" y="6" width="14" height="11" rx="1"/><path d="M15 9h4l3 3v5h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></div>
+      <span class="contact-label">Envíos</span>
+      <span class="contact-val">A toda Colombia</span>
+      <span class="contact-note">Transportadora según conveniencia o elección del cliente</span>
+    </div>
+    <div class="contact-item">
       <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.5" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
       <span class="contact-label">Correo</span>
       <span class="contact-val">comercializadorahousequeen&#64;gmail&#46;com</span>
@@ -353,7 +392,7 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
 
 <footer>
   <p><strong>House Queen</strong> — Comercializadora · Bogotá, Colombia</p>
-  <p>© 2025 Todos los derechos reservados</p>
+  <p>© <span id="yr">2025</span> Todos los derechos reservados · <a href="#" onclick="openPriv();return false">Aviso de privacidad</a></p>
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -378,6 +417,7 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="switchTab('add',this)">+ Producto</button>
       <button class="admin-tab" onclick="switchTab('list',this)">Mis productos</button>
+      <button class="admin-tab" onclick="switchTab('bulk',this)">Carga masiva</button>
       <button class="admin-tab" onclick="switchTab('logo',this)">Logo</button>
       <button class="admin-tab" onclick="switchTab('pwd',this)">Cuenta</button>
     </div>
@@ -404,6 +444,17 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
     </div>
     <div class="admin-section" id="tab-list">
       <div class="admin-list" id="adminList"></div>
+    </div>
+    <div class="admin-section" id="tab-bulk">
+      <p class="bulk-note">Sube varias fotos juntas: se crea un producto por cada foto, con el nombre del archivo como nombre. Después los completas en «Mis productos» (descripción, nombre, etc.). Máximo 30 fotos por vez.</p>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Categoría para todos</label><select class="form-select" id="bCat"></select></div>
+        <div class="form-group"><label class="form-label">Disponibilidad para todos</label><select class="form-select" id="bStatus"><option value="Disponible">Disponible</option><option value="Bajo pedido">Bajo pedido</option><option value="Agotado">Agotado</option></select></div>
+        <div class="form-group full"><label class="form-label">Fotos</label><input class="form-input" type="file" id="bFiles" accept="image/*" multiple onchange="document.getElementById('bCount').textContent = this.files.length ? this.files.length + ' foto(s) seleccionada(s)' : ''"><small id="bCount" style="color:var(--muted)"></small></div>
+        <div class="form-group full"><label class="chk"><input type="checkbox" id="bHidden" checked> Dejarlos ocultos hasta que revise los nombres (los muestras luego con «Mostrar»)</label></div>
+      </div>
+      <div class="logo-status" id="bProgress" style="display:none;margin-top:16px"></div>
+      <div class="form-actions"><button class="btn-save" id="btnBulk" onclick="saveBulk()">Subir productos</button></div>
     </div>
     <div class="admin-section" id="tab-logo">
       <div style="padding:20px 0">
@@ -442,10 +493,43 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
     <div class="drawer-head"><h2>Mi pedido</h2><button class="x-btn" onclick="closeCart()" aria-label="Cerrar">×</button></div>
     <div class="drawer-body" id="cartItems"></div>
     <div class="drawer-foot">
-      <textarea class="form-textarea" id="cartNotes" maxlength="300" placeholder="Notas: ciudad, colores, medidas... (opcional)"></textarea>
+      <input class="form-input" id="cartCity" maxlength="60" placeholder="Ciudad de envío (opcional)" autocomplete="address-level2">
+      <textarea class="form-textarea" id="cartNotes" maxlength="300" placeholder="Notas: colores, medidas... (opcional)"></textarea>
       <button class="btn-wa-send" id="btnSendCart" onclick="sendCart()">Enviar pedido por WhatsApp</button>
+      <button class="btn-copy" id="btnCopyCart" onclick="copyOrder()">Copiar resumen</button>
       <button class="btn-link" onclick="clearCart()">Vaciar pedido</button>
     </div>
+  </div>
+</div>
+
+<div class="layer" id="privLayer">
+  <div class="priv" role="dialog" aria-modal="true" aria-labelledby="privTitle">
+    <button class="x-btn" onclick="closePriv()" aria-label="Cerrar">×</button>
+    <h2 id="privTitle">Aviso de privacidad</h2>
+    <p class="priv-date">Última actualización: noviembre de 2026</p>
+
+    <h3>Responsable</h3>
+    <p>Comercializadora House Queen, Bogotá D.C., Colombia.<br>Correo: comercializadorahousequeen&#64;gmail&#46;com · WhatsApp: 316 800 3988.</p>
+
+    <h3>Qué datos tratamos</h3>
+    <p>Este catálogo no pide registro y no guarda datos personales de quienes lo visitan. Cuando haces un pedido, el mensaje se arma en tu navegador y se envía por WhatsApp. Allí conocemos tu nombre, tu número de teléfono y los datos que tú decidas escribirnos, como la ciudad o la dirección de envío.</p>
+
+    <h3>Para qué los usamos</h3>
+    <ul>
+      <li>Atender tu solicitud y cotizar tu pedido.</li>
+      <li>Coordinar el pago y el envío.</li>
+      <li>Comunicarnos contigo sobre tu pedido.</li>
+    </ul>
+    <p>Solo compartimos con la transportadora los datos necesarios para entregar tu pedido.</p>
+
+    <h3>Lo que se guarda en tu dispositivo</h3>
+    <p>Tu pedido en curso se guarda en tu propio navegador para que no lo pierdas si cierras la página. No se envía a ningún servidor nuestro y puedes borrarlo con el botón «Vaciar pedido». La página también usa servicios de terceros (Supabase para mostrar el catálogo y Google Fonts para las tipografías), que pueden registrar datos técnicos como la dirección IP.</p>
+
+    <h3>Tus derechos</h3>
+    <p>De acuerdo con la Ley 1581 de 2012, puedes conocer, actualizar y rectificar tus datos; pedir prueba de la autorización que nos diste; ser informado del uso que les damos; revocar tu autorización y solicitar que los eliminemos; y presentar quejas ante la Superintendencia de Industria y Comercio.</p>
+
+    <h3>Cómo ejercerlos</h3>
+    <p>Escríbenos al correo o al WhatsApp indicados arriba. Respondemos las consultas en máximo 10 días hábiles y los reclamos en máximo 15 días hábiles.</p>
   </div>
 </div>
 
@@ -500,7 +584,7 @@ async function writeHeaders(extra) {
 
 const sbFetch = async (path, opts = {}) => {
   const isWrite = opts.method && opts.method !== 'GET';
-  const auth = isWrite ? await writeHeaders({}) : { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
+  const auth = (isWrite || opts.admin) ? await writeHeaders({}) : { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...opts,
     headers: {
@@ -642,7 +726,7 @@ const CACHE_KEY = 'hq_cache';
 async function loadProducts() {
   try {
     const raw = await sbFetch('products?select=*&order=created_at.desc', { prefer: '' });
-    allProducts = raw.filter(p => p.name !== LOGO_NAME && p.category !== '__system__');
+    allProducts = raw.filter(p => p.name !== LOGO_NAME && p.category !== '__system__' && !p.hidden);
     cart = cart.filter(i => allProducts.some(p => String(p.id) === i.id)); saveCart(); updateCartBadge();
     try { localStorage.setItem(CACHE_KEY, JSON.stringify(allProducts)); } catch (e) {}
     renderCatMenu();
@@ -834,26 +918,94 @@ async function saveProduct() {
   finally { btn.disabled = false; btn.innerHTML = 'Guardar producto'; }
 }
 
+const STATUSES = ['Disponible', 'Bajo pedido', 'Agotado'];
 async function loadAdminList() {
   const list = document.getElementById('adminList');
   list.innerHTML = '<div class="no-items"><span class="spinner"></span> Cargando...</div>';
   try {
-    const prods = await sbFetch('products?select=*&order=created_at.desc', { prefer: '' });
+    const prods = await sbFetch('products?select=*&order=created_at.desc', { prefer: '', admin: true });
     const visible = prods.filter(p => p.name !== LOGO_NAME && p.category !== '__system__');
     if (!visible.length) { list.innerHTML = '<div class="no-items">No hay productos aún.</div>'; return; }
     list.innerHTML = visible.map(p => {
-      const img = safeUrl(p.image_url);
-      return '<div class="admin-item">' +
+      const img = safeUrl(p.image_url), id = esc(p.id), hid = !!p.hidden;
+      const st = STATUSES.includes(p.status) ? p.status : 'Disponible';
+      return '<div class="admin-item' + (hid ? ' is-hidden' : '') + '">' +
       (img ? '<img src="' + img + '" class="admin-thumb" alt="' + esc(p.name) + '">' : '<div class="admin-thumb-ph"><svg width="18" height="18" fill="none" stroke="var(--muted)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>') +
-      '<div class="admin-info"><strong>' + esc(p.name) + '</strong><span>' + esc(p.category || '') + ' · ' + esc(p.price || 'Sin precio') + ' · ' + esc(p.status || 'Disponible') + '</span></div>' +
-      '<div class="admin-actions"><button class="btn-edit" data-id="' + esc(p.id) + '" onclick="editProduct(this.dataset.id)">Editar</button><button class="btn-del" data-id="' + esc(p.id) + '" onclick="deleteProduct(this.dataset.id)">Eliminar</button></div>' +
-      '</div>';
+      '<div class="admin-info"><strong>' + esc(p.name) + (hid ? '<span class="tag-hidden">Oculto</span>' : '') + '</strong><span>' + esc(p.category || '') + (p.price ? ' · ' + esc(String(p.price).slice(0, 40)) : '') + '</span></div>' +
+      '<div class="admin-actions">' +
+        '<select class="st-sel" data-id="' + id + '" onchange="setStatus(this.dataset.id, this.value)" aria-label="Disponibilidad">' +
+          STATUSES.map(x => '<option' + (x === st ? ' selected' : '') + '>' + x + '</option>').join('') + '</select>' +
+        '<button class="btn-hide" data-id="' + id + '" data-hide="' + (hid ? '0' : '1') + '" onclick="toggleHidden(this.dataset.id, this.dataset.hide === \'1\')">' + (hid ? 'Mostrar' : 'Ocultar') + '</button>' +
+        '<button class="btn-edit" data-id="' + id + '" onclick="editProduct(this.dataset.id)">Editar</button>' +
+        '<button class="btn-del" data-id="' + id + '" onclick="deleteProduct(this.dataset.id)">Eliminar</button>' +
+      '</div></div>';
     }).join('');
   } catch (e) { list.innerHTML = '<div class="no-items">Error cargando productos.</div>'; }
 }
 
+const errText = e => String((e && e.message) || e || '').slice(0, 140);
+async function setStatus(id, status) {
+  try {
+    await sbFetch(`products?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ status }), prefer: 'return=minimal' });
+    showToast('Disponibilidad: ' + status + ' ✓');
+    await loadProducts();
+  } catch (e) { showToast('No se pudo cambiar: ' + errText(e)); loadAdminList(); }
+}
+async function toggleHidden(id, hide) {
+  try {
+    await sbFetch(`products?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ hidden: hide }), prefer: 'return=minimal' });
+    showToast(hide ? 'Producto oculto ✓' : 'Producto visible ✓');
+    await loadProducts(); loadAdminList();
+  } catch (e) {
+    showToast(/hidden/i.test(errText(e)) ? 'Falta ejecutar el SQL «ocultar productos» en Supabase' : 'No se pudo cambiar: ' + errText(e));
+  }
+}
+
+// Nombre provisional a partir del nombre del archivo ("sabana-queen-beige.jpg" → "Sabana queen beige")
+function nameFromFile(fn) {
+  const n = String(fn || '').replace(/\.[^.]+$/, '').replace(/[_\-.]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!n || /^[\d\s]+$/.test(n) || /^(img|dsc|pxl|mvimg|photo|image|imagen|foto|whatsapp|screenshot|captura)/i.test(n)) return 'Producto nuevo (editar nombre)';
+  return (n.charAt(0).toUpperCase() + n.slice(1)).slice(0, 150);
+}
+async function saveBulk() {
+  const files = [...document.getElementById('bFiles').files];
+  if (!files.length) { showToast('Selecciona al menos una foto'); return; }
+  if (files.length > 30) { showToast('Máximo 30 fotos por vez'); return; }
+  const cat = document.getElementById('bCat').value, status = document.getElementById('bStatus').value;
+  const hide = document.getElementById('bHidden').checked;
+  const btn = document.getElementById('btnBulk'), box = document.getElementById('bProgress');
+  btn.disabled = true; box.className = 'logo-status ok'; box.style.display = 'block';
+  let ok = 0, firstErr = '';
+  const failed = [];
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    box.textContent = 'Subiendo ' + (i + 1) + ' de ' + files.length + '...';
+    try {
+      if (f.size > 15 * 1024 * 1024) throw new Error('La foto pesa más de 15 MB');
+      const blob = await compressImage(f, 1600, 0.82);
+      const fname = Date.now() + '_' + Math.random().toString(36).slice(2, 7) + '.' + extFor(blob, f);
+      const url = await uploadFile(blob, fname);
+      const data = { name: nameFromFile(f.name), category: cat, description: '', price: '', status, image_url: url };
+      if (hide) data.hidden = true;
+      await sbFetch('products', { method: 'POST', body: JSON.stringify(data), prefer: 'return=minimal' });
+      ok++;
+    } catch (e) { failed.push(f.name); if (!firstErr) firstErr = errText(e); }
+  }
+  btn.disabled = false;
+  document.getElementById('bFiles').value = ''; document.getElementById('bCount').textContent = '';
+  if (ok) await loadProducts();
+  if (failed.length) {
+    box.className = 'logo-status err';
+    const needSql = /hidden/i.test(firstErr) ? ' Falta ejecutar el SQL «ocultar productos» en Supabase (o desmarca «Dejarlos ocultos»).' : ' ' + firstErr;
+    box.textContent = (ok ? ok + ' subido(s). ' : '') + 'No se pudieron subir ' + failed.length + ': ' + failed.slice(0, 5).join(', ') + (failed.length > 5 ? '…' : '') + '.' + needSql;
+  } else {
+    box.textContent = '✓ ' + ok + ' producto(s) creados' + (hide ? ' (ocultos). Revísalos en «Mis productos» y pulsa «Mostrar».' : '.');
+    showToast(ok + ' productos creados ✓');
+  }
+}
+
 async function editProduct(id) {
-  const p = allProducts.find(x => String(x.id) === String(id)) || (await sbFetch(`products?id=eq.${id}`, { prefer: '' }))[0];
+  const p = allProducts.find(x => String(x.id) === String(id)) || (await sbFetch(`products?id=eq.${encodeURIComponent(id)}`, { prefer: '', admin: true }))[0];
   if (!p) return;
   editId = id; selectedFile = null; currentImgUrl = p.image_url || null;
   document.getElementById('pName').value = p.name;
@@ -886,7 +1038,7 @@ async function savePwd() {
 }
 
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAdmin(); closePwd(); closeCart(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAdmin(); closePwd(); closeCart(); closePriv(); } });
 
 // ── PEDIDO (CARRITO) POR WHATSAPP ──
 const WA = '573168003988';
@@ -922,24 +1074,52 @@ function clearCart() { cart = []; saveCart(); updateCartBadge(); renderCart(); }
 function renderCart() {
   const box = document.getElementById('cartItems');
   if (!cart.length) box.innerHTML = '<div class="cart-empty">Tu pedido está vacío.<br>Agrega productos desde el catálogo.</div>';
-  else box.innerHTML = cart.map(i => {
-    const p = allProducts.find(x => String(x.id) === i.id), img = p ? safeUrl(p.image_url) : '', id = esc(i.id);
-    return '<div class="cart-row">' +
-      (img ? '<img class="cart-thumb" src="' + img + '" alt="">' : '<div class="cart-thumb"></div>') +
-      '<div class="cart-name">' + esc(i.name) + '</div>' +
-      '<div class="qty"><button type="button" data-act="minus" data-id="' + id + '" aria-label="Menos">−</button><span>' + i.qty + '</span><button type="button" data-act="plus" data-id="' + id + '" aria-label="Más">+</button></div>' +
-      '<button type="button" class="cart-rm" data-act="rm" data-id="' + id + '" aria-label="Quitar">✕</button></div>';
-  }).join('');
+  else {
+    const units = cart.reduce((n, i) => n + i.qty, 0);
+    box.innerHTML = cart.map(i => {
+      const p = allProducts.find(x => String(x.id) === i.id), img = p ? safeUrl(p.image_url) : '', id = esc(i.id);
+      return '<div class="cart-row">' +
+        (img ? '<img class="cart-thumb" src="' + img + '" alt="">' : '<div class="cart-thumb"></div>') +
+        '<div class="cart-name">' + esc(i.name) + '</div>' +
+        '<div class="qty"><button type="button" data-act="minus" data-id="' + id + '" aria-label="Menos">−</button>' +
+        '<input type="number" min="1" max="999" inputmode="numeric" value="' + i.qty + '" data-qty="' + id + '" aria-label="Cantidad">' +
+        '<button type="button" data-act="plus" data-id="' + id + '" aria-label="Más">+</button></div>' +
+        '<button type="button" class="cart-rm" data-act="rm" data-id="' + id + '" aria-label="Quitar">✕</button></div>';
+    }).join('') + '<div class="cart-total">Total: ' + units + ' unidad' + (units !== 1 ? 'es' : '') + ' · ' + cart.length + ' producto' + (cart.length !== 1 ? 's' : '') + '</div>';
+  }
   document.getElementById('btnSendCart').disabled = !cart.length;
+  document.getElementById('btnCopyCart').disabled = !cart.length;
+}
+function buildOrderMsg() {
+  const city = document.getElementById('cartCity').value.trim().slice(0, 60);
+  const notes = document.getElementById('cartNotes').value.trim().slice(0, 300);
+  const units = cart.reduce((n, i) => n + i.qty, 0);
+  return 'Hola House Queen! Quiero cotizar este pedido.' + (city ? '\nCiudad de envío: ' + city : '') + '\n\n' +
+    cart.map(i => '• ' + i.qty + ' x ' + i.name).join('\n') +
+    '\n\nTotal: ' + units + ' unidad' + (units !== 1 ? 'es' : '') + ' (' + cart.length + ' producto' + (cart.length !== 1 ? 's' : '') + ')' +
+    (notes ? '\nNotas: ' + notes : '');
 }
 function sendCart() {
   if (!cart.length) return;
-  const notes = document.getElementById('cartNotes').value.trim().slice(0, 300);
-  const msg = 'Hola House Queen! Quiero hacer un pedido.\n\n' +
-    cart.map(i => '• ' + i.qty + ' x ' + i.name).join('\n') + (notes ? '\n\nNotas: ' + notes : '');
-  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(buildOrderMsg()), '_blank', 'noopener');
 }
-function openCart() { renderCart(); document.getElementById('cartLayer').classList.add('open'); document.body.style.overflow = 'hidden'; }
+async function copyOrder() {
+  if (!cart.length) return;
+  const msg = buildOrderMsg();
+  try { await navigator.clipboard.writeText(msg); showToast('Resumen copiado ✓'); return; } catch (e) {}
+  const ta = document.createElement('textarea');
+  ta.value = msg; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('Resumen copiado ✓'); } catch (e) { showToast('No se pudo copiar'); }
+  ta.remove();
+}
+const CITY_KEY = 'hq_city';
+function restoreCity() { try { const c = localStorage.getItem(CITY_KEY); if (c) document.getElementById('cartCity').value = c; } catch (e) {} }
+document.getElementById('cartCity').addEventListener('input', e => { try { localStorage.setItem(CITY_KEY, e.target.value.slice(0, 60)); } catch (x) {} });
+function openCart() { renderCart(); restoreCity(); document.getElementById('cartLayer').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function openPriv() { document.getElementById('privLayer').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closePriv() { document.getElementById('privLayer').classList.remove('open'); document.body.style.overflow = ''; }
+document.getElementById('privLayer').addEventListener('click', e => { if (e.target.id === 'privLayer') closePriv(); });
 function closeCart() { document.getElementById('cartLayer').classList.remove('open'); document.body.style.overflow = ''; }
 
 document.getElementById('productsGrid').addEventListener('click', e => {
@@ -951,9 +1131,18 @@ document.getElementById('cartItems').addEventListener('click', e => {
   else if (b.dataset.act === 'minus') changeQty(b.dataset.id, -1);
   else if (b.dataset.act === 'rm') removeFromCart(b.dataset.id);
 });
+document.getElementById('cartItems').addEventListener('change', e => {
+  const inp = e.target.closest('[data-qty]'); if (!inp) return;
+  const it = cart.find(i => i.id === inp.dataset.qty); if (!it) return;
+  const v = parseInt(inp.value, 10);
+  if (!v || v < 1) { inp.value = it.qty; return; }
+  it.qty = Math.min(999, v); saveCart(); updateCartBadge(); renderCart();
+});
 document.getElementById('cartLayer').addEventListener('click', e => { if (e.target.id === 'cartLayer') closeCart(); });
 
 // INIT
+document.getElementById('bCat').innerHTML = document.getElementById('pCat').innerHTML;
+document.getElementById('yr').textContent = new Date().getFullYear();
 updateCartBadge();
 loadLogo();
 loadProducts();
