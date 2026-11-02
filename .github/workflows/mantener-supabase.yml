@@ -1,0 +1,22 @@
+name: Mantener Supabase activo
+
+# Supabase pausa los proyectos gratuitos tras una semana sin actividad.
+# Este trabajo hace una consulta pequeña cada día para evitarlo.
+on:
+  schedule:
+    - cron: '23 14 * * *'   # todos los días, 9:23 a.m. hora de Bogotá
+  workflow_dispatch:        # también se puede ejecutar a mano desde la pestaña Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consultar Supabase
+        env:
+          SUPABASE_URL: https://susqggsvnuipdzcpalvo.supabase.co
+          SUPABASE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1c3FnZ3N2bnVpcGR6Y3BhbHZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDcwNTgsImV4cCI6MjA5MDU4MzA1OH0.fwYEHuMpoJQ_wjQ97mJsEW0M48vGD28N6tZS1a1fayY
+        run: |
+          curl -fsS --retry 3 --retry-delay 15 \
+            "$SUPABASE_URL/rest/v1/products?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY"
