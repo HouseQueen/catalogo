@@ -183,6 +183,7 @@ footer strong{color:#C9A84C;font-family:'Cormorant Garamond',serif}
 .no-items{text-align:center;padding:40px;color:var(--muted);font-size:13px}
 .cfg-group{margin-bottom:22px}
 .cfg-title{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+@media (hover:none){.product-overlay{opacity:1;background:none}}
 @media(max-width:640px){
   .nav-top{padding:12px 4%;flex-wrap:wrap}.nav-search{order:3;max-width:100%;flex:1 1 100%}
   .hero{padding:40px 4%;flex-direction:column;gap:28px}.hero-left{flex-direction:row;gap:20px}
@@ -454,8 +455,29 @@ const sbFetch = async (path, opts = {}) => {
   return txt ? JSON.parse(txt) : [];
 };
 
+// Reduce la foto en el navegador: máx. lado largo y WebP (o JPG si el navegador no soporta WebP)
+async function compressImage(file, maxSide, quality) {
+  if (!file.type || !file.type.startsWith('image/') || file.type === 'image/gif' || file.type === 'image/svg+xml') return file;
+  try {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+    const w = Math.max(1, Math.round(bmp.width * scale)), h = Math.max(1, Math.round(bmp.height * scale));
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(bmp, 0, 0, w, h);
+    let blob = await new Promise(r => c.toBlob(r, 'image/webp', quality));
+    if (!blob || blob.type !== 'image/webp') {
+      ctx.globalCompositeOperation = 'destination-over'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+      blob = await new Promise(r => c.toBlob(r, 'image/jpeg', quality));
+    }
+    return (blob && blob.size < file.size) ? blob : file;
+  } catch (e) { return file; }
+}
+const extFor = (blob, file) => blob.type === 'image/webp' ? 'webp' : blob.type === 'image/jpeg' ? 'jpg'
+  : ((file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg');
+
 async function uploadFile(file, fname) {
-  const h = await writeHeaders({ 'Content-Type': file.type || 'image/jpeg', 'x-upsert': 'true' });
+  const h = await writeHeaders({ 'Content-Type': file.type || 'image/jpeg', 'x-upsert': 'true', 'cache-control': 'max-age=31536000' });
   const up = await fetch(`${SUPABASE_URL}/storage/v1/object/productos/${fname}`, { method: 'POST', headers: h, body: file });
   if (!up.ok) throw new Error(await up.text());
   return `${SUPABASE_URL}/storage/v1/object/public/productos/${fname}`;
@@ -521,9 +543,9 @@ async function saveLogo() {
   btn.innerHTML = '<span class="spinner"></span>Subiendo...';
   document.getElementById('logoStatusMsg').style.display = 'none';
   try {
-    const ext = (selectedLogoFile.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const fname = 'logo_' + Date.now() + '.' + ext;
-    const imageUrl = await uploadFile(selectedLogoFile, fname);
+    const blob = await compressImage(selectedLogoFile, 600, 0.9);
+    const fname = 'logo_' + Date.now() + '.' + extFor(blob, selectedLogoFile);
+    const imageUrl = await uploadFile(blob, fname);
 
     const existing = await sbFetch(`products?name=eq.${LOGO_NAME}&select=id`, { prefer: '' });
     if (existing.length) {
@@ -556,16 +578,39 @@ async function saveLogo() {
 }
 
 // ── PRODUCTOS ──
+const CACHE_KEY = 'hq_cache';
 async function loadProducts() {
   try {
     const raw = await sbFetch('products?select=*&order=created_at.desc', { prefer: '' });
     allProducts = raw.filter(p => p.name !== LOGO_NAME && p.category !== '__system__');
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(allProducts)); } catch (e) {}
     renderCatMenu();
     renderProducts();
   } catch (e) {
-    document.getElementById('productsGrid').innerHTML = '<div class="empty-state"><strong>Error de conexión</strong><p>No se pudo cargar el catálogo. Verifica tu conexión.</p></div>';
-    document.getElementById('catalogCount').textContent = '';
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (x) {}
+    if (Array.isArray(cached) && cached.length) {
+      allProducts = cached;
+      renderCatMenu();
+      renderProducts();
+      showToast('Sin conexión: mostrando la última versión guardada');
+    } else {
+      document.getElementById('productsGrid').innerHTML = '<div class="empty-state"><strong>Error de conexión</strong><p>No se pudo cargar el catálogo. Verifica tu conexión.</p><button class="btn-save" style="margin-top:16px" onclick="document.getElementById(\'catalogCount\').textContent=\'Cargando productos...\';loadProducts()">Reintentar</button></div>';
+      document.getElementById('catalogCount').textContent = '';
+    }
   }
+}
+
+// Precios colombianos: "$60.000 COP" = 60000, "$1.250.000" = 1250000, "45,5" = 45.5
+function parsePrice(txt) {
+  const t = String(txt || '').replace(/[^0-9.,]/g, '');
+  if (!/\d/.test(t)) return Infinity;           // "Consultar" o vacío: al final de la lista
+  let n;
+  if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) n = t.replace(/\./g, '').replace(',', '.');
+  else if (/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(t)) n = t.replace(/,/g, '');
+  else n = t.replace(',', '.');
+  const v = parseFloat(n);
+  return isNaN(v) ? Infinity : v;
 }
 
 function renderProducts() {
@@ -574,9 +619,9 @@ function renderProducts() {
   if (currentSearch) prods = prods.filter(p => ((p.name || '') + (p.description || '') + (p.category || '')).toLowerCase().includes(currentSearch.toLowerCase()));
   if (currentSort === 'name') prods.sort((a, b) => a.name.localeCompare(b.name));
   if (currentSort === 'price') prods.sort((a, b) => {
-    const pa = parseFloat((a.price || '0').replace(/[^0-9.]/g, '')),
-          pb = parseFloat((b.price || '0').replace(/[^0-9.]/g, ''));
-    return pa - pb;
+    const pa = parsePrice(a.price), pb = parsePrice(b.price);
+    if (pa === pb) return 0;
+    return pa === Infinity ? 1 : pb === Infinity ? -1 : pa - pb;
   });
 
   document.getElementById('catalogTitle').textContent = currentSearch
@@ -603,7 +648,7 @@ function renderProducts() {
       '<div class="product-image-wrap">' +
       (status !== 'Disponible' ? '<span class="product-badge ' + bCls + '">' + esc(status) + '</span>' : '') +
       (img
-        ? '<img class="product-img" src="' + img + '" alt="' + esc(p.name) + '" loading="lazy">'
+        ? '<img class="product-img" src="' + img + '" alt="' + esc(p.name) + '" loading="lazy" decoding="async">'
         : '<div class="product-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Sin imagen</span></div>') +
       '<div class="product-overlay">' +
       '<a class="product-wa-btn" href="' + esc(waUrl) + '" target="_blank" rel="noopener" style="text-decoration:none">' +
@@ -715,9 +760,9 @@ async function saveProduct() {
   try {
     let imageUrl = currentImgUrl;
     if (selectedFile) {
-      const ext = (selectedFile.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
-      const fname = Date.now() + '_' + Math.random().toString(36).slice(2, 7) + '.' + ext;
-      imageUrl = await uploadFile(selectedFile, fname);
+      const blob = await compressImage(selectedFile, 1600, 0.82);
+      const fname = Date.now() + '_' + Math.random().toString(36).slice(2, 7) + '.' + extFor(blob, selectedFile);
+      imageUrl = await uploadFile(blob, fname);
     }
     const data = { name, category: document.getElementById('pCat').value, description: document.getElementById('pDesc').value.trim(), price: document.getElementById('pPrice').value.trim(), status: document.getElementById('pStatus').value, image_url: imageUrl };
     if (editId) { await sbFetch(`products?id=eq.${editId}`, { method: 'PATCH', body: JSON.stringify(data), prefer: 'return=minimal' }); showToast('Producto actualizado ✓'); }
