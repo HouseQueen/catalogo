@@ -377,6 +377,36 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
 .of-prev-wrap .hero-offers{margin:0;max-width:430px}
 @media(max-width:1100px){.hero{flex-wrap:wrap}.hero-offers{flex:1 1 100%;margin-left:0;max-width:560px}}
 @media(max-width:640px){.hero-offers{max-width:none;padding:18px 16px;order:-1}.of-img{width:64px;height:64px}.of-prev-wrap .hero-offers{order:0}}
+
+/* Clientes (franja de logos antes de Contáctanos) */
+.clients{background:var(--light);border-top:1px solid var(--border);padding:44px 5% 48px;text-align:center}
+.clients[hidden]{display:none}
+.clients-title{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3vw,32px);font-weight:500;color:var(--dark);margin-bottom:6px}
+.clients-title::after{content:'';display:block;width:48px;height:1px;background:var(--gold-border);margin:12px auto 26px}
+.clients-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px 44px;max-width:1000px;margin:0 auto}
+.clients-row img{height:56px;max-width:150px;width:auto;object-fit:contain;filter:grayscale(1);opacity:.72;transition:filter .25s,opacity .25s}
+.clients-row img:hover{filter:none;opacity:1}
+.cl-item{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:3px;padding:8px 10px;margin-bottom:8px;background:#fff}
+.cl-item img{width:56px;height:40px;object-fit:contain;background:var(--light);border-radius:2px;flex-shrink:0}
+.cl-item .form-input{flex:1;min-width:0}
+.cl-item button{flex-shrink:0}
+.cl-prev{margin-top:6px;border:1px solid var(--border);border-radius:3px}
+@media(max-width:640px){.clients{padding:32px 4% 36px}.clients-row{gap:18px 26px}.clients-row img{height:44px;max-width:110px}}
+
+/* Elegir medida al agregar */
+.layer.pick.open{align-items:center;justify-content:center;padding:16px;z-index:1250}
+.pick-box{background:var(--white);border-radius:4px;max-width:390px;width:100%;padding:26px 22px 18px;position:relative;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.pick-box .x-btn{position:absolute;top:8px;right:8px}
+.pick-eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.pick-name{font-family:'Cormorant Garamond',serif;font-size:22px;line-height:1.2;color:var(--dark);margin-top:6px;overflow-wrap:anywhere}
+.pick-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0 10px}
+.pick-pill{border:1px solid var(--border2);background:var(--white);padding:11px 18px;border-radius:2px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--dark);min-width:104px;transition:all .15s}
+.pick-pill small{display:block;font-size:10.5px;color:var(--muted);margin-top:2px;letter-spacing:.03em}
+.pick-pill:hover,.pick-pill:focus-visible{border-color:var(--gold);background:var(--gold-pale);outline:none}
+.cart-size{display:block;margin-top:6px;font-size:12px;font-family:'DM Sans',sans-serif;border:1px solid var(--border2);border-radius:2px;padding:4px 6px;background:var(--white);color:var(--dark);max-width:100%}
+.cart-size.need{border-color:#C98A00;background:#FFF8E6}
+.cart-sz{display:block;width:fit-content;margin-top:4px;font-size:11px;color:#8A6B12;background:var(--gold-pale);border-radius:10px;padding:2px 9px}
+@media(max-width:640px){.layer.pick.open{align-items:flex-end;padding:0}.pick-box{max-width:none;border-radius:14px 14px 0 0;padding-bottom:26px}.pick-pill{flex:1 1 40%}}
 </style>
 </head>
 <body>
@@ -456,14 +486,6 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
         <option value="name">Nombre A–Z</option>
         <option value="price">Precio</option>
       </select>
-      <div class="view-btns">
-        <button class="view-btn active" id="btnGrid" onclick="setView('grid')" title="Cuadrícula">
-          <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3A1.5 1.5 0 0115 10.5v3A1.5 1.5 0 0113.5 15h-3A1.5 1.5 0 019 13.5v-3z"/></svg>
-        </button>
-        <button class="view-btn" id="btnList" onclick="setView('list')" title="Lista">
-          <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/></svg>
-        </button>
-      </div>
     </div>
   </div>
   <div class="products-grid" id="productsGrid">
@@ -473,6 +495,8 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
     <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line" style="width:65%"></div><div class="skeleton skeleton-line short"></div></div>
   </div>
 </section>
+
+<section class="clients" id="clientes" hidden aria-label="Nuestros clientes"></section>
 
 <section class="contact-bar" id="contacto">
   <h2>Contáctanos</h2>
@@ -543,6 +567,7 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
       <button class="admin-tab" onclick="switchTab('quote',this)">Cotizador</button>
       <button class="admin-tab" onclick="switchTab('aviso',this)">Aviso</button>
       <button class="admin-tab" onclick="switchTab('ofertas',this)">Ofertas</button>
+      <button class="admin-tab" onclick="switchTab('clientes',this)">Clientes</button>
       <button class="admin-tab" onclick="switchTab('bulk',this)">Carga masiva</button>
       <button class="admin-tab" onclick="switchTab('logo',this)">Logo</button>
       <button class="admin-tab" onclick="switchTab('pwd',this)">Cuenta</button>
@@ -647,6 +672,18 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
         <button type="button" class="btn-save" id="btnOf" onclick="saveOf()">Guardar ofertas</button>
       </div>
     </div>
+    <div class="admin-section" id="tab-clientes">
+      <p class="bulk-note">Muestra una franja con los logos de tus clientes al final del catálogo, justo antes de «Contáctanos». Sube hasta 12 logos (mejor PNG con fondo transparente o blanco). Usa solo logos de clientes que te hayan autorizado a mostrarlos.</p>
+      <div class="form-grid">
+        <div class="form-group full"><label class="chk"><input type="checkbox" id="clOn"> Mostrar la franja de clientes en la página</label></div>
+        <div class="form-group full"><label class="form-label" for="clTitle">Título</label><input class="form-input" id="clTitle" maxlength="60" placeholder="Empresas que confían en nosotros"></div>
+        <div class="form-group full"><label class="form-label" for="clFiles">Agregar logos (puedes elegir varios a la vez)</label><input class="form-input" type="file" id="clFiles" accept="image/*" multiple onchange="clAdd(this)"></div>
+      </div>
+      <div id="clList"></div>
+      <div class="av-prev-lbl">Así se verá</div>
+      <div class="clients cl-prev" id="clPrev"></div>
+      <div class="form-actions"><button type="button" class="btn-save" id="btnCl" onclick="saveCl()">Guardar clientes</button></div>
+    </div>
     <div class="admin-section" id="tab-bulk">
       <p class="bulk-note">Sube varias fotos juntas: se crea un producto por cada foto, con el nombre del archivo como nombre. Después los completas en «Mis productos» (descripción, nombre, etc.). Máximo 30 fotos por vez.</p>
       <div class="form-grid">
@@ -732,6 +769,16 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
 
     <h3>Cómo ejercerlos</h3>
     <p>Escríbenos al correo o al WhatsApp indicados arriba. Respondemos las consultas en máximo 10 días hábiles y los reclamos en máximo 15 días hábiles.</p>
+  </div>
+</div>
+
+<div class="layer pick" id="pickLayer">
+  <div class="pick-box" role="dialog" aria-modal="true" aria-labelledby="pickName">
+    <button class="x-btn" onclick="closePick()" aria-label="Cerrar">×</button>
+    <div class="pick-eyebrow">Elige la medida</div>
+    <div class="pick-name" id="pickName"></div>
+    <div class="pick-pills" id="pickPills"></div>
+    <button type="button" class="btn-link" onclick="closePick();openSize()">¿No sabes cuál? Te ayudamos a elegir</button>
   </div>
 </div>
 
@@ -955,7 +1002,9 @@ async function loadProducts() {
     const raw = await sbFetch('products?select=*&order=created_at.desc', { prefer: '' });
     detectSizes(raw);
     allProducts = raw.filter(p => p.name !== LOGO_NAME && p.category !== '__system__' && !p.hidden);
-    cart = cart.filter(i => allProducts.some(p => String(p.id) === i.id)); saveCart(); updateCartBadge();
+    cart = cart.filter(i => allProducts.some(p => String(p.id) === i.id));
+    cart.forEach(i => { const sz = prodSizes(allProducts.find(p => String(p.id) === i.id)); if (i.size && sz.length && !sz.includes(i.size)) i.size = ''; });
+    cart = mergeLines(cart); saveCart(); updateCartBadge();
     try { localStorage.setItem(CACHE_KEY, JSON.stringify(allProducts)); } catch (e) {}
     renderCatMenu();
     renderProducts();
@@ -1060,7 +1109,6 @@ function renderCatMenu() {
 function filterCat(cat, btn) { currentCat = cat; currentSearch = ''; document.getElementById('searchInput').value = ''; document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderProducts(); }
 function handleSearch(val) { currentSearch = val.trim(); currentCat = 'todos'; document.querySelectorAll('.cat-btn').forEach((b, i) => b.classList.toggle('active', i === 0)); renderProducts(); }
 function sortProducts(val) { currentSort = val; renderProducts(); }
-function setView(v) { currentView = v; document.getElementById('productsGrid').classList.toggle('list-view', v === 'list'); document.getElementById('btnGrid').classList.toggle('active', v === 'grid'); document.getElementById('btnList').classList.toggle('active', v === 'list'); }
 
 // AUTH
 window.openAdmin = async function() {
@@ -1107,6 +1155,7 @@ function switchTab(tab, btn) {
   if (tab === 'quote') initQuote();
   if (tab === 'aviso') initAviso();
   if (tab === 'ofertas') initOf();
+  if (tab === 'clientes') initCl();
   if (tab === 'logo') {
     // ✅ FIX: usar currentLogoUrl en lugar de LOGO_PUBLIC_URL (que no existía)
     if (currentLogoUrl) setLogoDropPreview(currentLogoUrl);
@@ -1276,16 +1325,26 @@ async function savePwd() {
 }
 
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAdmin(); closePwd(); closeCart(); closePriv(); closeSize(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAdmin(); closePwd(); closePick(); closeCart(); closePriv(); closeSize(); } });
 
 // ── PEDIDO (CARRITO) POR WHATSAPP ──
 const WA = '573168003988';
 const CART_KEY = 'hq_cart';
+const SIZE_KEYS = ['Sencilla', 'Semidoble', 'Doble', 'Queen', 'King'];
+const cartKey = (id, size) => String(id) + '|' + (size || '');
+const lineKey = i => cartKey(i.id, i.size);
+const findLine = k => cart.find(i => lineKey(i) === k);
+const prodSizes = p => (p && Array.isArray(p.sizes) ? SIZE_KEYS.filter(z => p.sizes.includes(z)) : []);
+function mergeLines(list) {
+  const out = [];
+  list.forEach(i => { const o = out.find(x => lineKey(x) === lineKey(i)); if (o) o.qty = Math.min(999, o.qty + i.qty); else out.push(i); });
+  return out;
+}
 let cart = [];
 try {
   const c = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
-  if (Array.isArray(c)) cart = c.filter(i => i && i.id != null && i.name)
-    .map(i => ({ id: String(i.id), name: String(i.name).slice(0, 150), qty: Math.min(999, Math.max(1, parseInt(i.qty, 10) || 1)) }));
+  if (Array.isArray(c)) cart = mergeLines(c.filter(i => i && i.id != null && i.name)
+    .map(i => ({ id: String(i.id), name: String(i.name).slice(0, 150), size: SIZE_KEYS.includes(i.size) ? i.size : '', qty: Math.min(999, Math.max(1, parseInt(i.qty, 10) || 1)) })));
 } catch (e) { cart = []; }
 const saveCart = () => { try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {} };
 
@@ -1294,19 +1353,47 @@ function updateCartBadge() {
   const el = document.getElementById('cartCount');
   el.textContent = n; el.classList.toggle('on', n > 0);
 }
-function addToCart(id) {
+function addToCart(id, size) {
   const p = allProducts.find(x => String(x.id) === String(id)); if (!p) return;
-  const it = cart.find(i => i.id === String(id));
-  if (it) it.qty = Math.min(999, it.qty + 1); else cart.push({ id: String(id), name: p.name, qty: 1 });
-  saveCart(); updateCartBadge(); showToast('Agregado a tu pedido ✓');
+  size = SIZE_KEYS.includes(size) ? size : '';
+  const it = findLine(cartKey(id, size));
+  if (it) it.qty = Math.min(999, it.qty + 1); else cart.push({ id: String(id), name: p.name, size, qty: 1 });
+  saveCart(); updateCartBadge(); showToast('Agregado a tu pedido' + (size ? ' · ' + size : '') + ' ✓');
 }
-function changeQty(id, d) {
-  const it = cart.find(i => i.id === String(id)); if (!it) return;
+// Al tocar «Agregar al pedido»: si el producto tiene varias medidas marcadas, el cliente elige una; si tiene una sola, se usa esa.
+function onAdd(id) {
+  const p = allProducts.find(x => String(x.id) === String(id)); if (!p) return;
+  const sz = prodSizes(p);
+  if (sz.length > 1) openPick(p, sz); else addToCart(id, sz[0] || '');
+}
+let pickId = null;
+function openPick(p, sz) {
+  pickId = String(p.id);
+  document.getElementById('pickName').textContent = p.name;
+  document.getElementById('pickPills').innerHTML = sz.map(z => { const d = SIZES.find(x => x.key === z);
+    return '<button type="button" class="pick-pill" data-pick="' + esc(z) + '">' + esc(z) + (d ? '<small>' + d.w + ' x ' + d.l + ' cm</small>' : '') + '</button>'; }).join('');
+  document.getElementById('pickLayer').classList.add('open'); document.body.style.overflow = 'hidden';
+  const f = document.querySelector('#pickPills .pick-pill'); if (f) f.focus();
+}
+function closePick() { document.getElementById('pickLayer').classList.remove('open'); if (!document.querySelector('.layer.open')) document.body.style.overflow = ''; pickId = null; }
+document.getElementById('pickPills').addEventListener('click', e => {
+  const b = e.target.closest('[data-pick]'); if (!b || !pickId) return;
+  addToCart(pickId, b.dataset.pick); closePick();
+});
+document.getElementById('pickLayer').addEventListener('click', e => { if (e.target.id === 'pickLayer') closePick(); });
+function changeQty(key, d) {
+  const it = findLine(key); if (!it) return;
   it.qty += d;
   if (it.qty < 1) cart = cart.filter(i => i !== it); else it.qty = Math.min(999, it.qty);
   saveCart(); updateCartBadge(); renderCart();
 }
-function removeFromCart(id) { cart = cart.filter(i => i.id !== String(id)); saveCart(); updateCartBadge(); renderCart(); }
+function changeSize(key, size) {
+  const it = findLine(key); if (!it || !SIZE_KEYS.includes(size)) return;
+  const other = cart.find(i => i !== it && i.id === it.id && i.size === size);
+  if (other) { other.qty = Math.min(999, other.qty + it.qty); cart = cart.filter(i => i !== it); } else it.size = size;
+  saveCart(); updateCartBadge(); renderCart();
+}
+function removeFromCart(key) { cart = cart.filter(i => lineKey(i) !== key); saveCart(); updateCartBadge(); renderCart(); }
 function clearCart() { cart = []; saveCart(); updateCartBadge(); renderCart(); }
 
 function renderCart() {
@@ -1315,25 +1402,34 @@ function renderCart() {
   else {
     const units = cart.reduce((n, i) => n + i.qty, 0);
     box.innerHTML = cart.map(i => {
-      const p = allProducts.find(x => String(x.id) === i.id), img = p ? safeUrl(p.image_url) : '', id = esc(i.id);
+      const p = allProducts.find(x => String(x.id) === i.id), img = p ? safeUrl(p.image_url) : '', k = esc(lineKey(i)), sz = prodSizes(p);
+      const sizeUi = sz.length > 1
+        ? '<select class="cart-size' + (i.size ? '' : ' need') + '" data-size="' + k + '" aria-label="Medida">' + (i.size ? '' : '<option value="">Elige la medida</option>') +
+          sz.map(z => '<option value="' + esc(z) + '"' + (z === i.size ? ' selected' : '') + '>' + esc(z) + '</option>').join('') + '</select>'
+        : (i.size ? '<span class="cart-sz">' + esc(i.size) + '</span>' : '');
       return '<div class="cart-row">' +
         (img ? '<img class="cart-thumb" src="' + img + '" alt="">' : '<div class="cart-thumb"></div>') +
-        '<div class="cart-name">' + esc(i.name) + '</div>' +
-        '<div class="qty"><button type="button" data-act="minus" data-id="' + id + '" aria-label="Menos">−</button>' +
-        '<input type="number" min="1" max="999" inputmode="numeric" value="' + i.qty + '" data-qty="' + id + '" aria-label="Cantidad">' +
-        '<button type="button" data-act="plus" data-id="' + id + '" aria-label="Más">+</button></div>' +
-        '<button type="button" class="cart-rm" data-act="rm" data-id="' + id + '" aria-label="Quitar">✕</button></div>';
+        '<div class="cart-name">' + esc(i.name) + sizeUi + '</div>' +
+        '<div class="qty"><button type="button" data-act="minus" data-id="' + k + '" aria-label="Menos">−</button>' +
+        '<input type="number" min="1" max="999" inputmode="numeric" value="' + i.qty + '" data-qty="' + k + '" aria-label="Cantidad">' +
+        '<button type="button" data-act="plus" data-id="' + k + '" aria-label="Más">+</button></div>' +
+        '<button type="button" class="cart-rm" data-act="rm" data-id="' + k + '" aria-label="Quitar">✕</button></div>';
     }).join('') + '<div class="cart-total">Total: ' + units + ' unidad' + (units !== 1 ? 'es' : '') + ' · ' + cart.length + ' producto' + (cart.length !== 1 ? 's' : '') + '</div>';
   }
   document.getElementById('btnSendCart').disabled = !cart.length;
   document.getElementById('btnCopyCart').disabled = !cart.length;
+}
+function orderLine(i) {
+  const p = allProducts.find(x => String(x.id) === i.id);
+  const inName = i.size && i.name.toLowerCase().includes(i.size.toLowerCase());
+  return '• ' + i.name + (i.size && !inName ? ' · ' + i.size : (!i.size && prodSizes(p).length > 1 ? ' · medida por definir' : '')) + ' · x' + i.qty;
 }
 function buildOrderMsg() {
   const city = document.getElementById('cartCity').value.trim().slice(0, 60);
   const notes = document.getElementById('cartNotes').value.trim().slice(0, 300);
   const units = cart.reduce((n, i) => n + i.qty, 0);
   return 'Hola House Queen! Quiero cotizar este pedido.' + (city ? '\nCiudad de envío: ' + city : '') + '\n\n' +
-    cart.map(i => '• ' + i.qty + ' x ' + i.name).join('\n') +
+    cart.map(orderLine).join('\n') +
     '\n\nTotal: ' + units + ' unidad' + (units !== 1 ? 'es' : '') + ' (' + cart.length + ' producto' + (cart.length !== 1 ? 's' : '') + ')' +
     (notes ? '\nNotas: ' + notes : '');
 }
@@ -1361,7 +1457,7 @@ document.getElementById('privLayer').addEventListener('click', e => { if (e.targ
 function closeCart() { document.getElementById('cartLayer').classList.remove('open'); document.body.style.overflow = ''; }
 
 document.getElementById('productsGrid').addEventListener('click', e => {
-  const add = e.target.closest('[data-add]'); if (add) addToCart(add.dataset.add);
+  const add = e.target.closest('[data-add]'); if (add) onAdd(add.dataset.add);
 });
 document.getElementById('cartItems').addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
@@ -1370,8 +1466,9 @@ document.getElementById('cartItems').addEventListener('click', e => {
   else if (b.dataset.act === 'rm') removeFromCart(b.dataset.id);
 });
 document.getElementById('cartItems').addEventListener('change', e => {
+  const sel = e.target.closest('[data-size]'); if (sel) { changeSize(sel.dataset.size, sel.value); return; }
   const inp = e.target.closest('[data-qty]'); if (!inp) return;
-  const it = cart.find(i => i.id === inp.dataset.qty); if (!it) return;
+  const it = findLine(inp.dataset.qty); if (!it) return;
   const v = parseInt(inp.value, 10);
   if (!v || v < 1) { inp.value = it.qty; return; }
   it.qty = Math.min(999, v); saveCart(); updateCartBadge(); renderCart();
@@ -1859,7 +1956,7 @@ async function initAviso() {
   } catch (e) {}
 }
 function avisoExample() {
-  fillAviso({ on: true, text: 'Black Friday en House Queen: pregunta por nuestros combos', until: '2026-11-30', cd: true, btn: 'Pedir combo', msg: 'Hola House Queen! Quiero información de los combos de Black Friday.' });
+  fillAviso({ on: true, text: 'Black Friday en House Queen: combo todos los viernes de noviembre', until: '2026-11-27', cd: false, btn: 'Pedir combo', msg: 'Hola House Queen! Quiero información del combo de Black Friday🖤' });
 }
 async function saveAviso() {
   const c = { on: document.getElementById('avOn').checked, text: document.getElementById('avText').value.trim(), until: document.getElementById('avUntil').value,
@@ -1996,10 +2093,10 @@ async function initOf() {
   } catch (e) {}
 }
 function ofExample() {
-  ofState[0] = Object.assign(ofBlank(), { name: 'Combo Black Friday', detail: 'Colcha española + sábana + protector de colchón. Envíos a toda Colombia.', price: '$169.900', until: '2026-11-30',
+  ofState[0] = Object.assign(ofBlank(), { name: 'Combo Black Friday', detail: 'Colcha, sábana y protector. Todos los viernes de noviembre.', price: '$169.900', until: '2026-11-27',
     msg: 'Hola House Queen! Quiero información del combo de Black Friday🖤', img: ofState[0].img, _prev: ofState[0]._prev });
   document.getElementById('ofOn').checked = true;
-  if (!ofP.until) { ofP.until = '2026-11-30'; document.getElementById('ofPUntil').value = ofP.until; }
+  if (!ofP.until) { ofP.until = '2026-11-27'; document.getElementById('ofPUntil').value = ofP.until; }
   if (!ofP.msg) { ofP.msg = 'Hola House Queen! Quiero información del combo de Black Friday🖤'; document.getElementById('ofPMsg').value = ofP.msg; }
   ofRenderSlots();
 }
@@ -2039,6 +2136,98 @@ async function saveOf() {
   finally { btn.disabled = false; btn.textContent = 'Guardar ofertas'; }
 }
 
+// ── CLIENTES (franja de logos; se edita desde el admin) ──
+// Se guarda como fila "del sistema". Solo se guarda el nombre del archivo del logo, para que quepa en el límite de texto.
+const CL_NAME = '__clientes__', CL_MAX = 12, CL_FILE = /^[\w.\-]+$/;
+let clCfg = null, clState = [];
+const clUrl = f => CL_FILE.test(f || '') ? SUPABASE_URL + '/storage/v1/object/public/productos/' + f : '';
+function parseCl(txt) {
+  try {
+    const o = JSON.parse(txt);
+    if (!o || typeof o !== 'object') return null;
+    return { on: !!o.on, title: String(o.title || '').slice(0, 60),
+      items: (Array.isArray(o.items) ? o.items : []).slice(0, CL_MAX).map(x => ({ n: String((x && x.n) || '').slice(0, 40), f: CL_FILE.test((x && x.f) || '') ? x.f : '' })).filter(x => x.f) };
+  } catch (e) { return null; }
+}
+function clHtml(title, items) {
+  const imgs = items.map(x => { const u = x._prev || clUrl(x.f); return u ? '<img src="' + esc(u) + '" alt="' + esc(x.n || 'Cliente de House Queen') + '" title="' + esc(x.n || '') + '" loading="lazy" onerror="this.remove()">' : ''; }).join('');
+  return imgs ? '<h2 class="clients-title">' + esc(title || 'Empresas que confían en nosotros') + '</h2><div class="clients-row">' + imgs + '</div>' : '';
+}
+function applyCl(c) {
+  clCfg = c; const el = document.getElementById('clientes');
+  const html = c && c.on ? clHtml(c.title, c.items) : '';
+  if (!html) { el.hidden = true; el.innerHTML = ''; return; }
+  el.innerHTML = html; el.hidden = false;
+}
+async function loadClientes() {
+  try {
+    const rows = await sbFetch('products?name=eq.' + CL_NAME + '&select=description', { prefer: '' });
+    if (rows.length) applyCl(parseCl(rows[0].description));
+  } catch (e) {}
+}
+function clPreview() {
+  const h = clHtml(document.getElementById('clTitle').value.trim(), clState);
+  document.getElementById('clPrev').innerHTML = h || '<p class="of-empty" style="color:var(--muted)">Sube logos y aquí verás cómo queda.</p>';
+}
+function clRender() {
+  document.getElementById('clList').innerHTML = clState.map((x, i) => '<div class="cl-item"><img src="' + esc(x._prev || clUrl(x.f)) + '" alt="">' +
+    '<input class="form-input" data-cl="' + i + '" maxlength="40" placeholder="Nombre del cliente (opcional)" value="' + esc(x.n) + '">' +
+    '<button type="button" class="btn-cancel-sm" onclick="clMove(' + i + ',-1)" title="Mover antes">‹</button>' +
+    '<button type="button" class="btn-cancel-sm" onclick="clMove(' + i + ',1)" title="Mover después">›</button>' +
+    '<button type="button" class="btn-cancel-sm" onclick="clRm(' + i + ')">Quitar</button></div>').join('');
+  clPreview();
+}
+function clAdd(inp) {
+  const files = [...inp.files]; inp.value = '';
+  for (const f of files) {
+    if (clState.length >= CL_MAX) { showToast('Máximo ' + CL_MAX + ' logos'); break; }
+    if (!f.type.startsWith('image/')) continue;
+    if (f.size > 5 * 1024 * 1024) { showToast('«' + f.name + '» pesa más de 5MB'); continue; }
+    clState.push({ n: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').slice(0, 40), f: '', _prev: URL.createObjectURL(f), _file: f });
+  }
+  clRender();
+}
+function clRm(i) { clState.splice(i, 1); clRender(); }
+function clMove(i, d) { const j = i + d; if (j < 0 || j >= clState.length) return; [clState[i], clState[j]] = [clState[j], clState[i]]; clRender(); }
+document.getElementById('clList').addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.cl != null) { clState[+t.dataset.cl].n = t.value; clPreview(); } });
+document.getElementById('clTitle').addEventListener('input', clPreview);
+function fillCl(c) {
+  clState = (c && c.items ? c.items : []).map(x => ({ n: x.n, f: x.f, _prev: '', _file: null }));
+  document.getElementById('clOn').checked = !!(c && c.on); document.getElementById('clTitle').value = (c && c.title) || ''; clRender();
+}
+async function initCl() {
+  fillCl(clCfg);
+  try {
+    const rows = await sbFetch('products?name=eq.' + CL_NAME + '&select=description', { prefer: '', admin: true });
+    if (rows.length) fillCl(parseCl(rows[0].description));
+  } catch (e) {}
+}
+async function saveCl() {
+  const on = document.getElementById('clOn').checked;
+  if (on && !clState.length) { showToast('Sube al menos un logo'); return; }
+  const btn = document.getElementById('btnCl'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Guardando...';
+  try {
+    const items = [];
+    for (let i = 0; i < clState.length; i++) {
+      const x = clState[i]; let f = x.f;
+      if (x._file) {
+        const blob = await compressImage(x._file, 500, 0.85);
+        f = 'cliente_' + Date.now() + '_' + i + '.' + extFor(blob, x._file);
+        await uploadFile(blob, f);
+      }
+      items.push({ n: x.n.trim().slice(0, 40), f });
+    }
+    const body = JSON.stringify({ on, title: document.getElementById('clTitle').value.trim().slice(0, 60), items });
+    if (body.length > 1900) { showToast('Demasiado texto: acorta los nombres'); return; }
+    const ex = await sbFetch('products?name=eq.' + CL_NAME + '&select=id', { prefer: '', admin: true });
+    if (ex.length) await sbFetch('products?name=eq.' + CL_NAME, { method: 'PATCH', body: JSON.stringify({ description: body }), prefer: 'return=minimal' });
+    else await sbFetch('products', { method: 'POST', body: JSON.stringify({ name: CL_NAME, category: '__system__', description: body, status: 'Disponible' }), prefer: 'return=minimal' });
+    const c = parseCl(body); applyCl(c); fillCl(c);
+    showToast(on ? 'Clientes publicados ✓' : 'Clientes guardados (apagados) ✓');
+  } catch (e) { showToast('No se pudo guardar: ' + errText(e)); }
+  finally { btn.disabled = false; btn.textContent = 'Guardar clientes'; }
+}
+
 // INIT
 document.getElementById('bCat').innerHTML = document.getElementById('pCat').innerHTML;
 document.getElementById('yr').textContent = new Date().getFullYear();
@@ -2047,6 +2236,7 @@ updateCartBadge();
 loadLogo();
 loadAviso();
 loadOfertas();
+loadClientes();
 loadProducts();
 </script>
 </body>
