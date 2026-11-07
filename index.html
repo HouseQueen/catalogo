@@ -673,6 +673,15 @@ button.of-btn{border:0;cursor:pointer;font-family:inherit}
     <div class="admin-section" id="tab-ofertas">
       <p class="bulk-note">Panel «Ofertas activas» que aparece a la derecha de «Elegancia para tu hogar». Puedes tener hasta 3 ofertas. Cada una se quita sola cuando pasa su fecha final. Las que dejes sin nombre no se muestran.</p>
       <div class="form-group full" style="margin-bottom:14px"><label class="chk"><input type="checkbox" id="ofOn"> Mostrar el panel de ofertas en la página</label></div>
+      <div class="of-slot" id="ofMk"><div class="of-slot-h">Combo para agregar al pedido</div>
+        <p class="bulk-note" style="margin-bottom:10px">Para que el cliente pueda agregar el combo al carrito, el combo debe ser un producto del catálogo. Con este botón se crea solo (categoría Combos, con la imagen de tu promoción como foto), se enlaza al afiche y se publican las ofertas. Después puedes editarlo en «Mis productos».</p>
+        <div class="form-grid">
+          <div class="form-group full"><label class="form-label" for="ofMkName">Nombre del producto</label><input class="form-input" id="ofMkName" maxlength="80" value="Combo Black Friday: colcha española + sábana + protector"></div>
+          <div class="form-group"><label class="form-label" for="ofMkPrice">Precio (se ve en la tarjeta; vacío = «Consultar precio»)</label><input class="form-input" id="ofMkPrice" maxlength="30" value="$169.900"></div>
+          <div class="form-group"><label class="form-label">Medidas en que vendes el combo</label><div class="size-checks" id="ofMkSizes"></div></div>
+        </div>
+        <div class="form-actions"><button type="button" class="btn-save" id="btnOfMk" onclick="ofMake()">Crear producto del combo y enlazarlo</button></div>
+      </div>
       <div class="of-slot"><div class="of-slot-h">Imagen de la promoción</div><div class="form-grid">
         <div class="form-group full"><label class="form-label">Sube aquí tu imagen final (se muestra grande en el panel y al tocarla abre WhatsApp)</label>
           <div class="of-photo"><img id="ofPImg" class="of-pimg" alt="" hidden>
@@ -2091,6 +2100,35 @@ async function loadOfertas() {
     if (rows.length) applyOf(parseOf(rows[0].description));
   } catch (e) {}
 }
+const OF_MK_DESC = 'Colcha española, sábana y protector de colchón en varios diseños. Todos los viernes de noviembre. Envíos a toda Colombia.';
+function ofMkSizes() {
+  document.getElementById('ofMkSizes').innerHTML = SIZE_KEYS.map(z => '<label class="sz-pill"><input type="checkbox" value="' + z + '"><span>' + z + '</span></label>').join('');
+}
+async function ofMake() {
+  const name = document.getElementById('ofMkName').value.trim(), price = document.getElementById('ofMkPrice').value.trim();
+  if (!name) { showToast('Escribe el nombre del combo'); return; }
+  if (ofP.pid && allProducts.some(p => String(p.id) === String(ofP.pid))) { showToast('El afiche ya está enlazado a un producto. Cámbialo en el selector de abajo.'); return; }
+  const sizes = [...document.querySelectorAll('#ofMkSizes input:checked')].map(i => i.value);
+  const btn = document.getElementById('btnOfMk'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Creando...';
+  try {
+    let img = ofP.img || '';
+    if (ofPFile) {
+      const pb = await compressImage(ofPFile, 1200, 0.85);
+      img = await uploadFile(pb, 'promo_' + Date.now() + '.' + extFor(pb, ofPFile));
+      ofP.img = img; ofPFile = null;
+    }
+    const data = { name, category: 'Combos', description: OF_MK_DESC, price, status: 'Disponible', image_url: img };
+    if (sizes.length && sizesSupported !== false) data.sizes = sizes;
+    const rows = await sbFetch('products', { method: 'POST', body: JSON.stringify(data) });
+    if (!rows || !rows[0] || rows[0].id == null) throw new Error('No se pudo crear el producto');
+    ofP.pid = String(rows[0].id);
+    await loadProducts();
+    ofRenderSlots();
+    await saveOf();
+    showToast('Combo creado y enlazado ✓ Ya se puede agregar al pedido');
+  } catch (e) { showToast(/sizes/i.test(errText(e)) ? 'Falta ejecutar el SQL «medidas» en Supabase (o desmarca las medidas)' : 'No se pudo crear el combo: ' + errText(e)); }
+  finally { btn.disabled = false; btn.textContent = 'Crear producto del combo y enlazarlo'; }
+}
 function ofProdOptions(sel) {
   const ps = allProducts.slice().sort((a, b) => ((b.category === 'Combos') - (a.category === 'Combos')) || String(a.name).localeCompare(String(b.name), 'es'));
   let h = '<option value="">— Ninguno (solo WhatsApp) —</option>' + ps.map(p => '<option value="' + esc(String(p.id)) + '"' + (String(p.id) === String(sel) ? ' selected' : '') + '>' + esc(p.name) + (p.category === 'Combos' ? '' : ' (' + esc(p.category || '') + ')') + '</option>').join('');
@@ -2147,7 +2185,7 @@ function fillOf(c) {
   ofRenderSlots();
 }
 async function initOf() {
-  fillOf(ofCfg);
+  ofMkSizes(); fillOf(ofCfg);
   try {
     const rows = await sbFetch('products?name=eq.' + OF_NAME + '&select=description', { prefer: '', admin: true });
     if (rows.length) fillOf(parseOf(rows[0].description));
