@@ -394,6 +394,10 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
 .of-meta b{color:#D4AE5A;font-weight:500}
 .of-btn{background:#C9A84C;color:var(--dark);text-decoration:none;padding:6px 14px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 .of-btn:hover{background:#D4AE5A}
+button.of-btn{border:0;cursor:pointer;font-family:inherit}
+.of-btn.alt{background:transparent;color:#C9A84C;border:1px solid #C9A84C}
+.of-btn.alt:hover{background:rgba(201,168,76,.15)}
+.of-acts{display:flex;gap:8px;flex-wrap:wrap}
 .of-poster{margin-bottom:4px}
 .of-poster>a{display:block;line-height:0}
 .of-poster img{width:100%;height:auto;display:block;border-radius:3px;border:1px solid rgba(201,168,76,.35)}
@@ -408,21 +412,6 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
 .of-prev-wrap .hero-offers{margin:0;max-width:430px}
 @media(max-width:1100px){.hero{flex-wrap:wrap}.hero-offers{flex:1 1 100%;margin-left:0;max-width:560px}}
 @media(max-width:640px){.hero-offers{max-width:none;padding:18px 16px;order:-1}.of-img{width:64px;height:64px}.of-prev-wrap .hero-offers{order:0}}
-
-/* Clientes (franja de logos antes de Contáctanos) */
-.clients{background:var(--light);border-top:1px solid var(--border);padding:44px 5% 48px;text-align:center}
-.clients[hidden]{display:none}
-.clients-title{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3vw,32px);font-weight:500;color:var(--dark);margin-bottom:6px}
-.clients-title::after{content:'';display:block;width:48px;height:1px;background:var(--gold-border);margin:12px auto 26px}
-.clients-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px 44px;max-width:1000px;margin:0 auto}
-.clients-row img{height:56px;max-width:150px;width:auto;object-fit:contain;filter:grayscale(1);opacity:.72;transition:filter .25s,opacity .25s}
-.clients-row img:hover{filter:none;opacity:1}
-.cl-item{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:3px;padding:8px 10px;margin-bottom:8px;background:#fff}
-.cl-item img{width:56px;height:40px;object-fit:contain;background:var(--light);border-radius:2px;flex-shrink:0}
-.cl-item .form-input{flex:1;min-width:0}
-.cl-item button{flex-shrink:0}
-.cl-prev{margin-top:6px;border:1px solid var(--border);border-radius:3px}
-@media(max-width:640px){.clients{padding:32px 4% 36px}.clients-row{gap:18px 26px}.clients-row img{height:44px;max-width:110px}}
 
 /* Elegir medida al agregar */
 .layer.pick.open{align-items:center;justify-content:center;padding:16px;z-index:1250}
@@ -527,7 +516,6 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
   </div>
 </section>
 
-<section class="clients" id="clientes" hidden aria-label="Nuestros clientes"></section>
 
 <section class="contact-bar" id="contacto">
   <h2>Contáctanos</h2>
@@ -599,7 +587,6 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
       <button class="admin-tab" onclick="switchTab('aviso',this)">Aviso</button>
       <button class="admin-tab" onclick="switchTab('ofertas',this)">Ofertas</button>
       <button class="admin-tab" onclick="switchTab('codigos',this)">Códigos</button>
-      <button class="admin-tab" onclick="switchTab('clientes',this)">Clientes</button>
       <button class="admin-tab" onclick="switchTab('bulk',this)">Carga masiva</button>
       <button class="admin-tab" onclick="switchTab('logo',this)">Logo</button>
       <button class="admin-tab" onclick="switchTab('pwd',this)">Cuenta</button>
@@ -693,6 +680,8 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
             <button type="button" class="btn-cancel-sm" onclick="ofPRm()">Quitar imagen</button>
             <input type="file" id="ofPFile" accept="image/*" style="display:none" onchange="ofPPick(this)"></div></div>
         <div class="form-group"><label class="form-label" for="ofPUntil">Termina el (incluye todo ese día)</label><input class="form-input" type="date" id="ofPUntil"></div>
+        <div class="form-group full"><label class="form-label" for="ofPPid">Producto que se agrega al pedido (opcional)</label><select class="form-select" id="ofPPid"></select>
+          <p class="bulk-note" style="margin:6px 0 0">Si eliges aquí tu combo (créalo antes en «+ Producto», categoría Combos, con sus medidas), el panel muestra el botón «+ Agregar al pedido» y el cliente lo suma al carrito. Sin producto, queda solo el botón de WhatsApp.</p></div>
         <div class="form-group"><label class="form-label" for="ofPMsg">Mensaje de WhatsApp (vacío = automático)</label><input class="form-input" id="ofPMsg" maxlength="100" placeholder="Hola House Queen! Quiero información del combo"></div>
       </div></div>
       <p class="bulk-note" style="margin-top:4px">Si subes la imagen de la promoción, deja vacías las ofertas de abajo (o úsalas solo para otras ofertas distintas), para no repetir la información.</p>
@@ -727,18 +716,6 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
       <div class="form-actions"><button type="button" class="btn-cancel-sm" id="btnCodeCancel" onclick="resetCodeForm()" hidden>Cancelar edición</button><button type="button" class="btn-save" id="btnCode" onclick="addCode()">Agregar código</button></div>
       <div class="av-prev-lbl">Códigos creados</div>
       <div id="cdList"></div>
-    </div>
-    <div class="admin-section" id="tab-clientes">
-      <p class="bulk-note">Muestra una franja con los logos de tus clientes al final del catálogo, justo antes de «Contáctanos». Sube hasta 12 logos (mejor PNG con fondo transparente o blanco). Usa solo logos de clientes que te hayan autorizado a mostrarlos.</p>
-      <div class="form-grid">
-        <div class="form-group full"><label class="chk"><input type="checkbox" id="clOn"> Mostrar la franja de clientes en la página</label></div>
-        <div class="form-group full"><label class="form-label" for="clTitle">Título</label><input class="form-input" id="clTitle" maxlength="60" placeholder="Empresas que confían en nosotros"></div>
-        <div class="form-group full"><label class="form-label" for="clFiles">Agregar logos (puedes elegir varios a la vez)</label><input class="form-input" type="file" id="clFiles" accept="image/*" multiple onchange="clAdd(this)"></div>
-      </div>
-      <div id="clList"></div>
-      <div class="av-prev-lbl">Así se verá</div>
-      <div class="clients cl-prev" id="clPrev"></div>
-      <div class="form-actions"><button type="button" class="btn-save" id="btnCl" onclick="saveCl()">Guardar clientes</button></div>
     </div>
     <div class="admin-section" id="tab-bulk">
       <p class="bulk-note">Sube varias fotos juntas: se crea un producto por cada foto, con el nombre del archivo como nombre. Después los completas en «Mis productos» (descripción, nombre, etc.). Máximo 30 fotos por vez.</p>
@@ -1069,6 +1046,7 @@ async function loadProducts() {
     try { localStorage.setItem(CACHE_KEY, JSON.stringify(allProducts)); } catch (e) {}
     renderCatMenu();
     renderProducts();
+    if (ofCfg && !document.getElementById('heroOffers').hidden) applyOf(ofCfg);
   } catch (e) {
     let cached = null;
     try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (x) {}
@@ -1217,7 +1195,6 @@ function switchTab(tab, btn) {
   if (tab === 'aviso') initAviso();
   if (tab === 'ofertas') initOf();
   if (tab === 'codigos') initCodes();
-  if (tab === 'clientes') initCl();
   if (tab === 'logo') {
     // ✅ FIX: usar currentLogoUrl en lugar de LOGO_PUBLIC_URL (que no existía)
     if (currentLogoUrl) setLogoDropPreview(currentLogoUrl);
@@ -2043,9 +2020,10 @@ async function saveAviso() {
 // Se guarda como una fila "del sistema" (igual que el aviso), sin tocar la base de datos.
 const OF_NAME = '__ofertas__', OF_MAX = 3;
 const OF_MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-let ofCfg = null, ofState = [], ofFiles = [], ofTimer = null, ofP = { img: '', _prev: '', until: '', msg: '' }, ofPFile = null;
-const ofCur = () => ({ items: ofState, poster: ofP.img, _pprev: ofP._prev, puntil: ofP.until, pmsg: ofP.msg });
-const ofBlank = () => ({ name: '', detail: '', price: '', until: '', msg: '', img: '' });
+let ofCfg = null, ofState = [], ofFiles = [], ofTimer = null, ofP = { img: '', _prev: '', until: '', msg: '', pid: '' }, ofPFile = null;
+const ofCur = () => ({ items: ofState, poster: ofP.img, _pprev: ofP._prev, puntil: ofP.until, pmsg: ofP.msg, ppid: ofP.pid });
+const ofBlank = () => ({ name: '', detail: '', price: '', until: '', msg: '', img: '', pid: '' });
+const ofPidOk = v => /^[\w-]{1,40}$/.test(String(v || '')) ? String(v) : '';
 function parseOf(txt) {
   try {
     const o = JSON.parse(txt);
@@ -2053,9 +2031,9 @@ function parseOf(txt) {
     const items = (Array.isArray(o.items) ? o.items : []).slice(0, OF_MAX).map(x => { x = x || {}; return {
       name: String(x.name || '').slice(0, 50), detail: String(x.detail || '').slice(0, 90), price: String(x.price || '').slice(0, 20),
       until: /^\d{4}-\d{2}-\d{2}$/.test(x.until || '') ? x.until : '', msg: String(x.msg || '').slice(0, 100),
-      img: /^https?:\/\//i.test(x.img || '') ? String(x.img) : '' }; });
+      img: /^https?:\/\//i.test(x.img || '') ? String(x.img) : '', pid: ofPidOk(x.pid) }; });
     return { on: !!o.on, items, poster: /^https?:\/\//i.test(o.poster || '') ? String(o.poster) : '',
-      puntil: /^\d{4}-\d{2}-\d{2}$/.test(o.puntil || '') ? o.puntil : '', pmsg: String(o.pmsg || '').slice(0, 100) };
+      puntil: /^\d{4}-\d{2}-\d{2}$/.test(o.puntil || '') ? o.puntil : '', pmsg: String(o.pmsg || '').slice(0, 100), ppid: ofPidOk(o.ppid) };
   } catch (e) { return null; }
 }
 const ofEnd = u => { if (!u) return null; const d = new Date(u + 'T23:59:59-05:00'); return isNaN(d) ? null : d; };
@@ -2067,6 +2045,11 @@ function ofLeft(until) {
 }
 const ofImgUrl = u => /^(https?:|blob:)/i.test(String(u || '')) ? esc(u) : '';
 const ofWa = msg => 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
+// Botón «Agregar al pedido»: solo si la oferta está ligada a un producto del catálogo que existe y no está agotado (si el catálogo aún no carga, se muestra).
+const ofCanAdd = pid => { if (!pid) return false; if (!allProducts.length) return true; const p = allProducts.find(x => String(x.id) === String(pid)); return !!p && p.status !== 'Agotado'; };
+const ofActs = (pid, link) => ofCanAdd(pid)
+  ? '<span class="of-acts"><button type="button" class="of-btn" data-ofadd="' + esc(pid) + '">+ Agregar al pedido</button><a class="of-btn alt" target="_blank" rel="noopener" href="' + link + '">Pedir</a></span>'
+  : '<a class="of-btn" target="_blank" rel="noopener" href="' + link + '">Pedir</a>';
 function ofHtml(c, preview) {
   const now = new Date(), items = c.items || [];
   const list = items.filter(x => x.name.trim() && (preview || !x.until || (ofEnd(x.until) && ofEnd(x.until) >= now)));
@@ -2077,7 +2060,7 @@ function ofHtml(c, preview) {
   if (showP) {
     const link = ofWa(c.pmsg || (list[0] && list[0].msg) || 'Hola House Queen! Quiero información de la promoción.');
     h += '<div class="of-poster"><a target="_blank" rel="noopener" href="' + link + '"><img src="' + pimg + '" alt="Promoción vigente en House Queen" loading="lazy" onerror="this.closest(\'.of-poster\').remove()"></a>' +
-      '<div class="of-meta"><span>' + ofLeft(c.puntil) + '</span><a class="of-btn" target="_blank" rel="noopener" href="' + link + '">Pedir</a></div></div>';
+      '<div class="of-meta"><span>' + ofLeft(c.puntil) + '</span>' + ofActs(c.ppid, link) + '</div></div>';
   }
   return h + list.map(x => {
     const msg = x.msg || ('Hola House Queen! Quiero información de: ' + x.name);
@@ -2085,7 +2068,7 @@ function ofHtml(c, preview) {
     return '<div class="of-item">' + (img ? '<img class="of-img" src="' + img + '" alt="' + esc(x.name) + '" loading="lazy" onerror="this.remove()">' : '') +
       '<div class="of-body"><div class="of-name">' + esc(x.name) + '</div>' + (x.detail ? '<div class="of-detail">' + esc(x.detail) + '</div>' : '') +
       (x.price ? '<div class="of-price">' + esc(x.price) + '</div>' : '') +
-      '<div class="of-meta"><span>' + ofLeft(x.until) + '</span><a class="of-btn" target="_blank" rel="noopener" href="' + ofWa(msg) + '">Pedir</a></div></div></div>';
+      '<div class="of-meta"><span>' + ofLeft(x.until) + '</span>' + ofActs(x.pid, ofWa(msg)) + '</div></div></div>';
   }).join('');
 }
 function applyOf(c) {
@@ -2096,19 +2079,33 @@ function applyOf(c) {
   el.innerHTML = html; el.hidden = false;
   ofTimer = setInterval(() => applyOf(ofCfg), 60000);
 }
+document.getElementById('heroOffers').addEventListener('click', e => {
+  const b = e.target.closest('[data-ofadd]'); if (!b) return;
+  const id = b.dataset.ofadd;
+  if (!allProducts.some(p => String(p.id) === String(id))) { showToast('Este producto ya no está disponible'); return; }
+  onAdd(id);
+});
 async function loadOfertas() {
   try {
     const rows = await sbFetch('products?name=eq.' + OF_NAME + '&select=description', { prefer: '' });
     if (rows.length) applyOf(parseOf(rows[0].description));
   } catch (e) {}
 }
+function ofProdOptions(sel) {
+  const ps = allProducts.slice().sort((a, b) => ((b.category === 'Combos') - (a.category === 'Combos')) || String(a.name).localeCompare(String(b.name), 'es'));
+  let h = '<option value="">— Ninguno (solo WhatsApp) —</option>' + ps.map(p => '<option value="' + esc(String(p.id)) + '"' + (String(p.id) === String(sel) ? ' selected' : '') + '>' + esc(p.name) + (p.category === 'Combos' ? '' : ' (' + esc(p.category || '') + ')') + '</option>').join('');
+  if (sel && !ps.some(p => String(p.id) === String(sel))) h += '<option value="' + esc(sel) + '" selected>(producto no disponible)</option>';
+  return h;
+}
 function ofRenderSlots() {
+  document.getElementById('ofPPid').innerHTML = ofProdOptions(ofP.pid);
   document.getElementById('ofSlots').innerHTML = ofState.map((x, i) => '<div class="of-slot"><div class="of-slot-h">Oferta ' + (i + 1) + '</div><div class="form-grid">' +
     '<div class="form-group full"><label class="form-label">Nombre (vacío = no se muestra)</label><input class="form-input" data-of="name" data-i="' + i + '" maxlength="50" placeholder="Ej: Combo Black Friday" value="' + esc(x.name) + '"></div>' +
     '<div class="form-group full"><label class="form-label">Qué incluye</label><input class="form-input" data-of="detail" data-i="' + i + '" maxlength="90" placeholder="Ej: Colcha española + sábana + protector de colchón" value="' + esc(x.detail) + '"></div>' +
     '<div class="form-group"><label class="form-label">Precio</label><input class="form-input" data-of="price" data-i="' + i + '" maxlength="20" placeholder="$169.900" value="' + esc(x.price) + '"></div>' +
     '<div class="form-group"><label class="form-label">Termina el (incluye todo ese día)</label><input class="form-input" type="date" data-of="until" data-i="' + i + '" value="' + esc(x.until) + '"></div>' +
     '<div class="form-group full"><label class="form-label">Mensaje de WhatsApp del botón (vacío = automático)</label><input class="form-input" data-of="msg" data-i="' + i + '" maxlength="100" placeholder="Hola House Queen! Quiero información del combo" value="' + esc(x.msg) + '"></div>' +
+    '<div class="form-group full"><label class="form-label">Producto que se agrega al pedido (opcional)</label><select class="form-select" data-of="pid" data-i="' + i + '">' + ofProdOptions(x.pid) + '</select></div>' +
     '<div class="form-group full"><label class="form-label">Foto (opcional)</label><div class="of-photo"><img id="ofImg' + i + '" alt="" ' + (ofImgUrl(x._prev || x.img) ? 'src="' + ofImgUrl(x._prev || x.img) + '"' : 'hidden') + '>' +
     '<button type="button" class="btn-cancel-sm" onclick="document.getElementById(\'ofFile' + i + '\').click()">Elegir foto</button>' +
     '<button type="button" class="btn-cancel-sm" onclick="ofRmImg(' + i + ')">Quitar foto</button>' +
@@ -2142,7 +2139,7 @@ function ofPPick(inp) {
 }
 function ofPRm() { ofPFile = null; ofP.img = ''; ofP._prev = ''; document.getElementById('ofPFile').value = ''; ofPShow(); ofPreview(); }
 function fillOf(c) {
-  ofP = { img: (c && c.poster) || '', _prev: '', until: (c && c.puntil) || '', msg: (c && c.pmsg) || '' }; ofPFile = null;
+  ofP = { img: (c && c.poster) || '', _prev: '', until: (c && c.puntil) || '', msg: (c && c.pmsg) || '', pid: (c && c.ppid) || '' }; ofPFile = null;
   document.getElementById('ofPUntil').value = ofP.until; document.getElementById('ofPMsg').value = ofP.msg; ofPShow();
   ofState = []; ofFiles = [];
   for (let i = 0; i < OF_MAX; i++) ofState.push(Object.assign(ofBlank(), c && c.items && c.items[i] ? c.items[i] : {}));
@@ -2166,6 +2163,7 @@ function ofExample() {
 }
 document.getElementById('ofPUntil').addEventListener('input', e => { ofP.until = e.target.value; ofPreview(); });
 document.getElementById('ofPMsg').addEventListener('input', e => { ofP.msg = e.target.value; ofPreview(); });
+document.getElementById('ofPPid').addEventListener('input', e => { ofP.pid = e.target.value; ofPreview(); });
 document.getElementById('ofSlots').addEventListener('input', e => {
   const t = e.target; if (!t.dataset || !t.dataset.of) return;
   ofState[+t.dataset.i][t.dataset.of] = t.value; ofPreview();
@@ -2187,9 +2185,9 @@ async function saveOf() {
         const blob = await compressImage(ofFiles[i], 900, 0.82);
         img = await uploadFile(blob, 'oferta_' + Date.now() + '_' + i + '.' + extFor(blob, ofFiles[i]));
       }
-      items.push({ name: x.name.trim().slice(0, 50), detail: x.detail.trim().slice(0, 90), price: x.price.trim().slice(0, 20), until: x.until || '', msg: x.msg.trim().slice(0, 100), img });
+      items.push({ name: x.name.trim().slice(0, 50), detail: x.detail.trim().slice(0, 90), price: x.price.trim().slice(0, 20), until: x.until || '', msg: x.msg.trim().slice(0, 100), img, pid: ofPidOk(x.pid) });
     }
-    const body = JSON.stringify({ on, poster, puntil: ofP.until || '', pmsg: (ofP.msg || '').trim().slice(0, 100), items });
+    const body = JSON.stringify({ on, poster, puntil: ofP.until || '', pmsg: (ofP.msg || '').trim().slice(0, 100), ppid: ofPidOk(ofP.pid), items });
     if (body.length > 1900) { showToast('Demasiado texto: acorta los mensajes'); return; }
     const ex = await sbFetch('products?name=eq.' + OF_NAME + '&select=id', { prefer: '', admin: true });
     if (ex.length) await sbFetch('products?name=eq.' + OF_NAME, { method: 'PATCH', body: JSON.stringify({ description: body }), prefer: 'return=minimal' });
@@ -2437,98 +2435,6 @@ document.getElementById('cdList').addEventListener('click', async e => {
 });
 document.getElementById('cdCode').addEventListener('input', e => { const v = codeNorm(e.target.value); if (v !== e.target.value) e.target.value = v; });
 
-// ── CLIENTES (franja de logos; se edita desde el admin) ──
-// Se guarda como fila "del sistema". Solo se guarda el nombre del archivo del logo, para que quepa en el límite de texto.
-const CL_NAME = '__clientes__', CL_MAX = 12, CL_FILE = /^[\w.\-]+$/;
-let clCfg = null, clState = [];
-const clUrl = f => CL_FILE.test(f || '') ? SUPABASE_URL + '/storage/v1/object/public/productos/' + f : '';
-function parseCl(txt) {
-  try {
-    const o = JSON.parse(txt);
-    if (!o || typeof o !== 'object') return null;
-    return { on: !!o.on, title: String(o.title || '').slice(0, 60),
-      items: (Array.isArray(o.items) ? o.items : []).slice(0, CL_MAX).map(x => ({ n: String((x && x.n) || '').slice(0, 40), f: CL_FILE.test((x && x.f) || '') ? x.f : '' })).filter(x => x.f) };
-  } catch (e) { return null; }
-}
-function clHtml(title, items) {
-  const imgs = items.map(x => { const u = x._prev || clUrl(x.f); return u ? '<img src="' + esc(u) + '" alt="' + esc(x.n || 'Cliente de House Queen') + '" title="' + esc(x.n || '') + '" loading="lazy" onerror="this.remove()">' : ''; }).join('');
-  return imgs ? '<h2 class="clients-title">' + esc(title || 'Empresas que confían en nosotros') + '</h2><div class="clients-row">' + imgs + '</div>' : '';
-}
-function applyCl(c) {
-  clCfg = c; const el = document.getElementById('clientes');
-  const html = c && c.on ? clHtml(c.title, c.items) : '';
-  if (!html) { el.hidden = true; el.innerHTML = ''; return; }
-  el.innerHTML = html; el.hidden = false;
-}
-async function loadClientes() {
-  try {
-    const rows = await sbFetch('products?name=eq.' + CL_NAME + '&select=description', { prefer: '' });
-    if (rows.length) applyCl(parseCl(rows[0].description));
-  } catch (e) {}
-}
-function clPreview() {
-  const h = clHtml(document.getElementById('clTitle').value.trim(), clState);
-  document.getElementById('clPrev').innerHTML = h || '<p class="of-empty" style="color:var(--muted)">Sube logos y aquí verás cómo queda.</p>';
-}
-function clRender() {
-  document.getElementById('clList').innerHTML = clState.map((x, i) => '<div class="cl-item"><img src="' + esc(x._prev || clUrl(x.f)) + '" alt="">' +
-    '<input class="form-input" data-cl="' + i + '" maxlength="40" placeholder="Nombre del cliente (opcional)" value="' + esc(x.n) + '">' +
-    '<button type="button" class="btn-cancel-sm" onclick="clMove(' + i + ',-1)" title="Mover antes">‹</button>' +
-    '<button type="button" class="btn-cancel-sm" onclick="clMove(' + i + ',1)" title="Mover después">›</button>' +
-    '<button type="button" class="btn-cancel-sm" onclick="clRm(' + i + ')">Quitar</button></div>').join('');
-  clPreview();
-}
-function clAdd(inp) {
-  const files = [...inp.files]; inp.value = '';
-  for (const f of files) {
-    if (clState.length >= CL_MAX) { showToast('Máximo ' + CL_MAX + ' logos'); break; }
-    if (!f.type.startsWith('image/')) continue;
-    if (f.size > 5 * 1024 * 1024) { showToast('«' + f.name + '» pesa más de 5MB'); continue; }
-    clState.push({ n: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').slice(0, 40), f: '', _prev: URL.createObjectURL(f), _file: f });
-  }
-  clRender();
-}
-function clRm(i) { clState.splice(i, 1); clRender(); }
-function clMove(i, d) { const j = i + d; if (j < 0 || j >= clState.length) return; [clState[i], clState[j]] = [clState[j], clState[i]]; clRender(); }
-document.getElementById('clList').addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.cl != null) { clState[+t.dataset.cl].n = t.value; clPreview(); } });
-document.getElementById('clTitle').addEventListener('input', clPreview);
-function fillCl(c) {
-  clState = (c && c.items ? c.items : []).map(x => ({ n: x.n, f: x.f, _prev: '', _file: null }));
-  document.getElementById('clOn').checked = !!(c && c.on); document.getElementById('clTitle').value = (c && c.title) || ''; clRender();
-}
-async function initCl() {
-  fillCl(clCfg);
-  try {
-    const rows = await sbFetch('products?name=eq.' + CL_NAME + '&select=description', { prefer: '', admin: true });
-    if (rows.length) fillCl(parseCl(rows[0].description));
-  } catch (e) {}
-}
-async function saveCl() {
-  const on = document.getElementById('clOn').checked;
-  if (on && !clState.length) { showToast('Sube al menos un logo'); return; }
-  const btn = document.getElementById('btnCl'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Guardando...';
-  try {
-    const items = [];
-    for (let i = 0; i < clState.length; i++) {
-      const x = clState[i]; let f = x.f;
-      if (x._file) {
-        const blob = await compressImage(x._file, 500, 0.85);
-        f = 'cliente_' + Date.now() + '_' + i + '.' + extFor(blob, x._file);
-        await uploadFile(blob, f);
-      }
-      items.push({ n: x.n.trim().slice(0, 40), f });
-    }
-    const body = JSON.stringify({ on, title: document.getElementById('clTitle').value.trim().slice(0, 60), items });
-    if (body.length > 1900) { showToast('Demasiado texto: acorta los nombres'); return; }
-    const ex = await sbFetch('products?name=eq.' + CL_NAME + '&select=id', { prefer: '', admin: true });
-    if (ex.length) await sbFetch('products?name=eq.' + CL_NAME, { method: 'PATCH', body: JSON.stringify({ description: body }), prefer: 'return=minimal' });
-    else await sbFetch('products', { method: 'POST', body: JSON.stringify({ name: CL_NAME, category: '__system__', description: body, status: 'Disponible' }), prefer: 'return=minimal' });
-    const c = parseCl(body); applyCl(c); fillCl(c);
-    showToast(on ? 'Clientes publicados ✓' : 'Clientes guardados (apagados) ✓');
-  } catch (e) { showToast('No se pudo guardar: ' + errText(e)); }
-  finally { btn.disabled = false; btn.textContent = 'Guardar clientes'; }
-}
-
 // INIT
 document.getElementById('bCat').innerHTML = document.getElementById('pCat').innerHTML;
 document.getElementById('yr').textContent = new Date().getFullYear();
@@ -2537,7 +2443,6 @@ updateCartBadge();
 loadLogo();
 loadAviso();
 loadOfertas();
-loadClientes();
 loadProducts();
 </script>
 </body>
