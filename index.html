@@ -243,6 +243,37 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
 .qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .qty input:focus{background:var(--gold-pale)}
 .cart-total{font-size:12px;color:var(--muted);text-align:right;padding:14px 0 6px}
+.cart-disc{font-size:12.5px;color:#2E6B3E;background:#EAF4EC;border-radius:3px;padding:8px 12px;margin:6px 0 4px;text-align:left;line-height:1.5}
+.cd-box{margin-bottom:12px}
+.drawer-foot .cd-box .form-label{display:block;margin-bottom:6px}
+.cd-row{display:flex;gap:8px}
+.drawer-foot .cd-row .form-input{flex:1;min-width:0;margin-bottom:0;text-transform:uppercase;letter-spacing:.18em;font-weight:600}
+.cd-row .btn-cancel-sm{flex-shrink:0;padding:9px 16px}
+.cd-msg{font-size:12.5px;line-height:1.5;margin-top:8px}
+.cd-msg:empty{display:none}
+.cd-ok{color:#2E6B3E;font-weight:500;display:block}
+.cd-bad{color:#A33}
+.cd-sub{display:block;color:var(--muted);font-size:12px}
+.cd-rm{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12px;padding:0;margin-top:4px;font-family:inherit}
+.cd-gen{display:flex;gap:8px}
+.cd-gen .form-input{flex:1;min-width:0;text-transform:uppercase;letter-spacing:.15em}
+.cdl-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;border:1px solid var(--border);border-radius:3px;padding:10px 12px;margin-bottom:8px;background:#fff}
+.cdl-code{font-weight:700;letter-spacing:.14em;font-size:15px}
+.cdl-pct{color:var(--gold);font-weight:600}
+.cdl-meta{font-size:12px;color:var(--muted);flex:1 1 150px;min-width:0}
+.cdl-st{font-size:11px;border-radius:10px;padding:2px 9px;background:#EAF4EC;color:#2E6B3E}
+.cdl-st.off{background:#F1EDE3;color:#7a7160}
+.cdl-act{display:flex;gap:6px;flex-wrap:wrap}
+.cdl-act button{padding:6px 12px;font-size:12px}
+.cd-scope{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.cdp{border:1px solid var(--border);border-radius:3px;background:#fff;padding:10px 12px}
+.cdp-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.cdp-top .form-input{flex:1 1 180px;min-width:0}
+.cdp-count{font-size:12px;color:var(--muted)}
+.cdp-list{max-height:260px;overflow:auto;border-top:1px solid var(--border);padding-top:6px}
+.cdp-cat{margin-top:8px;padding-bottom:3px;border-bottom:1px dashed var(--border)}
+.cdp-it{padding:5px 0 5px 22px}
+.cd-edit-note{font-size:12.5px;color:var(--gold);margin-top:10px}
 .drawer-foot .form-input{width:100%;margin-bottom:10px}
 .btn-copy{display:block;width:100%;background:transparent;border:1px solid var(--border2);color:var(--dark);padding:11px;border-radius:2px;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px;transition:all 0.2s}
 .btn-copy:hover{border-color:var(--gold);color:var(--gold)}
@@ -567,6 +598,7 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
       <button class="admin-tab" onclick="switchTab('quote',this)">Cotizador</button>
       <button class="admin-tab" onclick="switchTab('aviso',this)">Aviso</button>
       <button class="admin-tab" onclick="switchTab('ofertas',this)">Ofertas</button>
+      <button class="admin-tab" onclick="switchTab('codigos',this)">Códigos</button>
       <button class="admin-tab" onclick="switchTab('clientes',this)">Clientes</button>
       <button class="admin-tab" onclick="switchTab('bulk',this)">Carga masiva</button>
       <button class="admin-tab" onclick="switchTab('logo',this)">Logo</button>
@@ -672,6 +704,30 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
         <button type="button" class="btn-save" id="btnOf" onclick="saveOf()">Guardar ofertas</button>
       </div>
     </div>
+    <div class="admin-section" id="tab-codigos">
+      <p class="bulk-note">Crea códigos de descuento de 3 letras y 3 números (por ejemplo VAL123). El cliente lo escribe en «Mi pedido», ve su descuento y el código viaja en el mensaje de WhatsApp para que sepas de quién es la venta y calcules la comisión. Cada código puede tener fecha final, aplicar a todo el catálogo o solo a los productos que elijas, y se puede pausar o editar.</p>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label" for="cdCode">Código (3 letras + 3 números)</label><div class="cd-gen"><input class="form-input" id="cdCode" placeholder="VAL123" autocomplete="off" spellcheck="false"><button type="button" class="btn-cancel-sm" onclick="codeSuggest()">Generar</button></div></div>
+        <div class="form-group"><label class="form-label" for="cdPct">% de descuento</label><input class="form-input" type="number" id="cdPct" min="1" max="90" step="1" inputmode="numeric" placeholder="10"></div>
+        <div class="form-group"><label class="form-label" for="cdOwner">De quién es (para tu control)</label><input class="form-input" id="cdOwner" maxlength="30" placeholder="Valentina"></div>
+        <div class="form-group"><label class="form-label" for="cdUntil">Vence el (incluye todo ese día)</label><input class="form-input" type="date" id="cdUntil"></div>
+        <div class="form-group full"><label class="form-label">¿A qué productos aplica este código?</label>
+          <div class="cd-scope">
+            <label class="chk"><input type="radio" name="cdScope" value="all" checked> A todo el catálogo</label>
+            <label class="chk" id="cdNoComboRow" style="padding-left:24px"><input type="checkbox" id="cdNoCombo" checked> Excepto los productos de la categoría Combos</label>
+            <label class="chk"><input type="radio" name="cdScope" value="pick"> Solo a los productos que yo elija</label>
+          </div></div>
+        <div class="form-group full" id="cdPickBox" hidden>
+          <div class="cdp">
+            <div class="cdp-top"><input class="form-input" id="cdQ" placeholder="Buscar producto o categoría..." autocomplete="off"><span class="cdp-count" id="cdCount"></span></div>
+            <div class="cdp-list" id="cdPick"></div>
+          </div></div>
+      </div>
+      <div class="cd-edit-note" id="cdEditNote" hidden></div>
+      <div class="form-actions"><button type="button" class="btn-cancel-sm" id="btnCodeCancel" onclick="resetCodeForm()" hidden>Cancelar edición</button><button type="button" class="btn-save" id="btnCode" onclick="addCode()">Agregar código</button></div>
+      <div class="av-prev-lbl">Códigos creados</div>
+      <div id="cdList"></div>
+    </div>
     <div class="admin-section" id="tab-clientes">
       <p class="bulk-note">Muestra una franja con los logos de tus clientes al final del catálogo, justo antes de «Contáctanos». Sube hasta 12 logos (mejor PNG con fondo transparente o blanco). Usa solo logos de clientes que te hayan autorizado a mostrarlos.</p>
       <div class="form-grid">
@@ -732,6 +788,11 @@ footer a{color:#C9A84C;text-decoration:none}footer a:hover{text-decoration:under
     <div class="drawer-head"><h2>Mi pedido</h2><button class="x-btn" onclick="closeCart()" aria-label="Cerrar">×</button></div>
     <div class="drawer-body" id="cartItems"></div>
     <div class="drawer-foot">
+      <div class="cd-box">
+        <label class="form-label" for="cdIn">¿Tienes un código de descuento?</label>
+        <div class="cd-row"><input class="form-input" id="cdIn" placeholder="ABC123" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="cdMsg"><button type="button" class="btn-cancel-sm" id="cdBtn" onclick="applyCode()">Aplicar</button></div>
+        <div class="cd-msg" id="cdMsg" role="status" aria-live="polite"></div>
+      </div>
       <input class="form-input" id="cartCity" maxlength="60" placeholder="Ciudad de envío (opcional)" autocomplete="address-level2">
       <textarea class="form-textarea" id="cartNotes" maxlength="300" placeholder="Notas: colores, medidas... (opcional)"></textarea>
       <button class="btn-wa-send" id="btnSendCart" onclick="sendCart()">Enviar pedido por WhatsApp</button>
@@ -1155,6 +1216,7 @@ function switchTab(tab, btn) {
   if (tab === 'quote') initQuote();
   if (tab === 'aviso') initAviso();
   if (tab === 'ofertas') initOf();
+  if (tab === 'codigos') initCodes();
   if (tab === 'clientes') initCl();
   if (tab === 'logo') {
     // ✅ FIX: usar currentLogoUrl en lugar de LOGO_PUBLIC_URL (que no existía)
@@ -1414,8 +1476,9 @@ function renderCart() {
         '<input type="number" min="1" max="999" inputmode="numeric" value="' + i.qty + '" data-qty="' + k + '" aria-label="Cantidad">' +
         '<button type="button" data-act="plus" data-id="' + k + '" aria-label="Más">+</button></div>' +
         '<button type="button" class="cart-rm" data-act="rm" data-id="' + k + '" aria-label="Quitar">✕</button></div>';
-    }).join('') + '<div class="cart-total">Total: ' + units + ' unidad' + (units !== 1 ? 'es' : '') + ' · ' + cart.length + ' producto' + (cart.length !== 1 ? 's' : '') + '</div>';
+    }).join('') + '<div class="cart-total">Total: ' + units + ' unidad' + (units !== 1 ? 'es' : '') + ' · ' + cart.length + ' producto' + (cart.length !== 1 ? 's' : '') + '</div>' + discLine();
   }
+  renderCode();
   document.getElementById('btnSendCart').disabled = !cart.length;
   document.getElementById('btnCopyCart').disabled = !cart.length;
 }
@@ -1431,6 +1494,7 @@ function buildOrderMsg() {
   return 'Hola House Queen! Quiero cotizar este pedido.' + (city ? '\nCiudad de envío: ' + city : '') + '\n\n' +
     cart.map(orderLine).join('\n') +
     '\n\nTotal: ' + units + ' unidad' + (units !== 1 ? 'es' : '') + ' (' + cart.length + ' producto' + (cart.length !== 1 ? 's' : '') + ')' +
+    codeMsgLine() +
     (notes ? '\nNotas: ' + notes : '');
 }
 function sendCart() {
@@ -1450,7 +1514,7 @@ async function copyOrder() {
 const CITY_KEY = 'hq_city';
 function restoreCity() { try { const c = localStorage.getItem(CITY_KEY); if (c) document.getElementById('cartCity').value = c; } catch (e) {} }
 document.getElementById('cartCity').addEventListener('input', e => { try { localStorage.setItem(CITY_KEY, e.target.value.slice(0, 60)); } catch (x) {} });
-function openCart() { renderCart(); restoreCity(); document.getElementById('cartLayer').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function openCart() { renderCart(); restoreCity(); restoreCode(); document.getElementById('cartLayer').classList.add('open'); document.body.style.overflow = 'hidden'; }
 function openPriv() { document.getElementById('privLayer').classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closePriv() { document.getElementById('privLayer').classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('privLayer').addEventListener('click', e => { if (e.target.id === 'privLayer') closePriv(); });
@@ -2135,6 +2199,243 @@ async function saveOf() {
   } catch (e) { showToast('No se pudo guardar: ' + errText(e)); }
   finally { btn.disabled = false; btn.textContent = 'Guardar ofertas'; }
 }
+
+// ── CÓDIGOS DE DESCUENTO ──
+// Se guardan como fila "del sistema" (compacta: [código, %, vence, dueña, noCombos, activo]). El cliente los consulta solo al tocar "Aplicar".
+const CODE_NAME = '__codigos__', CODE_MAX = 30, CODE_RE = /^[A-Z]{3}[0-9]{3}$/, CODE_KEY = 'hq_code';
+let codeList = [], codeLoaded = 0, codeApplied = null, cdNote = '';
+const codeNorm = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+const codeIds = v => { const o = []; (Array.isArray(v) ? v : []).forEach(x => { x = String(x); if (/^[\w-]{1,40}$/.test(x) && !o.includes(x)) o.push(x); }); return o.slice(0, 80); };
+function parseCodes(txt) {
+  try {
+    const o = JSON.parse(txt), out = [];
+    (o && Array.isArray(o.items) ? o.items : []).slice(0, CODE_MAX).forEach(a => {
+      if (!Array.isArray(a)) return;
+      const c = String(a[0] || '').toUpperCase(), p = parseInt(a[1], 10);
+      if (!CODE_RE.test(c) || !(p >= 1 && p <= 90) || out.some(x => x.c === c)) return;
+      out.push({ c, p, u: /^\d{4}-\d{2}-\d{2}$/.test(a[2] || '') ? a[2] : '', n: String(a[3] || '').slice(0, 30), x: !!a[4], a: a[5] === undefined ? true : !!a[5], ids: codeIds(a[6]) });
+    });
+    return out;
+  } catch (e) { return []; }
+}
+const codeBody = list => JSON.stringify({ items: list.map(x => [x.c, x.p, x.u, x.n, x.x ? 1 : 0, x.a ? 1 : 0, (x.ids || []).map(i => /^\d+$/.test(i) ? +i : i)]) });
+const codeExpired = c => { const e = ofEnd(c.u); return !!(e && e < new Date()); };
+async function fetchCodes() {
+  if (codeLoaded && Date.now() - codeLoaded < 60000) return codeList;
+  const rows = await sbFetch('products?name=eq.' + CODE_NAME + '&select=description', { prefer: '' });
+  codeList = rows.length ? parseCodes(rows[0].description) : []; codeLoaded = Date.now();
+  return codeList;
+}
+const isComboLine = i => { const p = allProducts.find(x => String(x.id) === i.id); return !!p && p.category === 'Combos'; };
+const codeFits = i => { if (!codeApplied) return false; if (codeApplied.ids.length) return codeApplied.ids.includes(String(i.id)); return !(codeApplied.noCombo && isComboLine(i)); };
+function codeSplit() {
+  if (!codeApplied) return { ok: 0, ex: 0, exNames: [] };
+  const ex = cart.filter(i => !codeFits(i));
+  return { ok: cart.length - ex.length, ex: ex.length, exNames: ex.map(i => i.name) };
+}
+const codeNames = (arr, n) => arr.slice(0, n).join(', ') + (arr.length > n ? '…' : '');
+function codeScopeNames() { return allProducts.filter(p => codeApplied && codeApplied.ids.includes(String(p.id))).map(p => p.name); }
+function discLine() {
+  if (!codeApplied || !cart.length || !codeSplit().ok) return '';
+  return '<div class="cart-disc">🏷️ Descuento del <b>' + codeApplied.pct + ' %</b> con tu código ' + esc(codeApplied.code) + '</div>';
+}
+function codeMsgLine() {
+  if (!codeApplied) return '';
+  const sp = codeSplit();
+  return '\nCódigo de descuento: ' + codeApplied.code + ' (' + codeApplied.pct + ' %)' + (sp.ex ? ' - no aplica a: ' + codeNames(sp.exNames, 3) : '');
+}
+function renderCode() {
+  const box = document.getElementById('cdMsg'), inp = document.getElementById('cdIn'), btn = document.getElementById('cdBtn');
+  if (!box) return;
+  if (codeApplied) {
+    const sp = codeSplit();
+    inp.value = codeApplied.code; inp.readOnly = true; btn.hidden = true;
+    const picked = codeApplied.ids.length;
+    const sub = !cart.length ? (picked ? 'Aplica solo a: ' + codeNames(codeScopeNames(), 4) : '')
+      : !sp.ok ? (picked ? 'Este código aplica solo a: ' + codeNames(codeScopeNames(), 4) + '. Ninguno está en tu pedido.' : 'No aplica a los combos de tu pedido.')
+      : sp.ex ? 'No aplica a: ' + codeNames(sp.exNames, 3) + '.' : 'Aplica a todo tu pedido.';
+    box.innerHTML = '<span class="cd-ok">✓ Código ' + esc(codeApplied.code) + ': ' + codeApplied.pct + ' % de descuento</span>' +
+      (sub ? '<span class="cd-sub">' + sub + '</span>' : '') + '<button type="button" class="cd-rm" onclick="rmCode()">Quitar código</button>';
+  } else {
+    inp.readOnly = false; btn.hidden = false;
+    box.innerHTML = cdNote ? '<span class="cd-bad">' + esc(cdNote) + '</span>' : '';
+  }
+}
+async function applyCode(code, silent) {
+  code = codeNorm(typeof code === 'string' ? code : document.getElementById('cdIn').value);
+  if (!silent) {
+    if (!code) { cdNote = 'Escribe tu código.'; renderCode(); return; }
+    if (!CODE_RE.test(code)) { cdNote = 'El código son 3 letras y 3 números, por ejemplo ABC123.'; renderCode(); return; }
+  }
+  const btn = document.getElementById('cdBtn'); btn.disabled = true;
+  try {
+    const c = (await fetchCodes()).find(x => x.c === code);
+    if (!c || !c.a) throw new Error('Ese código no es válido.');
+    if (codeExpired(c)) throw new Error('Ese código ya venció.');
+    codeApplied = { code: c.c, pct: c.p, noCombo: c.x, ids: c.ids }; cdNote = '';
+    try { localStorage.setItem(CODE_KEY, c.c); } catch (e) {}
+  } catch (e) {
+    const known = /^Ese código/.test(e.message);
+    codeApplied = null;
+    if (known) { try { localStorage.removeItem(CODE_KEY); } catch (x) {} }
+    cdNote = silent ? '' : (known ? e.message : 'No pudimos revisar el código. Intenta de nuevo.');
+  } finally { btn.disabled = false; }
+  renderCart();
+}
+function rmCode() {
+  codeApplied = null; cdNote = ''; document.getElementById('cdIn').value = '';
+  try { localStorage.removeItem(CODE_KEY); } catch (e) {}
+  renderCart();
+}
+function restoreCode() {
+  if (codeApplied) return;
+  try { const c = localStorage.getItem(CODE_KEY); if (c) applyCode(c, true); } catch (e) {}
+}
+document.getElementById('cdIn').addEventListener('input', e => { const v = codeNorm(e.target.value); if (v !== e.target.value) e.target.value = v; cdNote = ''; document.getElementById('cdMsg').innerHTML = ''; });
+document.getElementById('cdIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyCode(); } });
+
+// Admin
+let cdAdmin = [];
+const codeLetters = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z]/g, '');
+function codeSuggest() {
+  if (cdEditing) return;
+  let l = codeLetters(document.getElementById('cdOwner').value).slice(0, 3);
+  const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  while (l.length < 3) l += A[Math.floor(Math.random() * A.length)];
+  let c;
+  for (let k = 0; k < 50; k++) { c = l + String(Math.floor(Math.random() * 900) + 100); if (!cdAdmin.some(x => x.c === c)) break; }
+  document.getElementById('cdCode').value = c;
+}
+function codeRows() {
+  const box = document.getElementById('cdList');
+  if (!cdAdmin.length) { box.innerHTML = '<p class="bulk-note">Todavía no has creado códigos.</p>'; return; }
+  box.innerHTML = cdAdmin.map(x => {
+    const exp = codeExpired(x), on = x.a && !exp, k = esc(x.c);
+    const scope = x.ids.length ? ' · solo ' + x.ids.length + ' producto' + (x.ids.length !== 1 ? 's' : '') : (x.x ? ' · todo menos combos' : ' · todo el catálogo');
+    return '<div class="cdl-row"><span class="cdl-code">' + k + '</span><span class="cdl-pct">' + x.p + ' %</span>' +
+      '<span class="cdl-meta">' + (x.n ? esc(x.n) + ' · ' : '') + (x.u ? 'vence el ' + ofDate(x.u) : 'sin fecha final') + scope + '</span>' +
+      '<span class="cdl-st' + (on ? '' : ' off') + '">' + (exp ? 'Vencido' : x.a ? 'Activo' : 'Pausado') + '</span>' +
+      '<span class="cdl-act"><button type="button" class="btn-cancel-sm" data-ca="edit" data-c="' + k + '">Editar</button>' +
+      '<button type="button" class="btn-cancel-sm" data-ca="copy" data-c="' + k + '">Copiar mensaje</button>' +
+      '<button type="button" class="btn-cancel-sm" data-ca="toggle" data-c="' + k + '">' + (x.a ? 'Pausar' : 'Activar') + '</button>' +
+      '<button type="button" class="btn-cancel-sm" data-ca="rm" data-c="' + k + '">Quitar</button></span></div>';
+  }).join('');
+}
+async function saveCodes(list) {
+  const body = codeBody(list);
+  if (body.length > 1900) throw new Error('Demasiados códigos: quita los que ya no uses');
+  const ex = await sbFetch('products?name=eq.' + CODE_NAME + '&select=id', { prefer: '', admin: true });
+  if (ex.length) await sbFetch('products?name=eq.' + CODE_NAME, { method: 'PATCH', body: JSON.stringify({ description: body }), prefer: 'return=minimal' });
+  else await sbFetch('products', { method: 'POST', body: JSON.stringify({ name: CODE_NAME, category: '__system__', description: body, status: 'Disponible' }), prefer: 'return=minimal' });
+  cdAdmin = list; codeList = list.slice(); codeLoaded = Date.now(); codeRows();
+}
+async function initCodes() {
+  codeRows(); cdScopeUi();
+  try {
+    const rows = await sbFetch('products?name=eq.' + CODE_NAME + '&select=description', { prefer: '', admin: true });
+    cdAdmin = rows.length ? parseCodes(rows[0].description) : []; codeRows();
+  } catch (e) { showToast('No se pudieron cargar los códigos: ' + errText(e)); }
+}
+// Selector de productos
+let cdSel = new Set(), cdEditing = null;
+const cdScope = () => (document.querySelector('input[name=cdScope]:checked') || {}).value || 'all';
+function cdScopeUi() {
+  const pick = cdScope() === 'pick';
+  document.getElementById('cdPickBox').hidden = !pick;
+  document.getElementById('cdNoComboRow').style.display = pick ? 'none' : '';
+  if (pick) cdPickRender();
+}
+function cdFiltered() {
+  const q = (document.getElementById('cdQ').value || '').trim().toLowerCase();
+  return allProducts.filter(p => !q || ((p.name || '') + ' ' + (p.category || '')).toLowerCase().includes(q));
+}
+function cdPickRender() {
+  const groups = {};
+  cdFiltered().forEach(p => { const c = p.category || 'Otro'; (groups[c] = groups[c] || []).push(p); });
+  const html = Object.keys(groups).sort().map(cat => {
+    const ps = groups[cat].sort((a, b) => String(a.name).localeCompare(String(b.name), 'es')), all = ps.every(p => cdSel.has(String(p.id)));
+    return '<div class="cdp-cat"><label class="chk"><input type="checkbox" data-cat="' + esc(cat) + '"' + (all ? ' checked' : '') + '> <b>' + esc(cat) + '</b>&nbsp;(' + ps.length + ')</label></div>' +
+      ps.map(p => '<label class="chk cdp-it"><input type="checkbox" data-pid="' + esc(String(p.id)) + '"' + (cdSel.has(String(p.id)) ? ' checked' : '') + '> ' + esc(p.name) + '</label>').join('');
+  }).join('');
+  document.getElementById('cdPick').innerHTML = html || '<p class="bulk-note">No hay productos que coincidan.</p>';
+  const n = cdSel.size;
+  document.getElementById('cdCount').textContent = n ? n + ' producto' + (n !== 1 ? 's' : '') + ' elegido' + (n !== 1 ? 's' : '') : 'Ninguno elegido';
+}
+document.querySelectorAll('input[name=cdScope]').forEach(r => r.addEventListener('change', cdScopeUi));
+document.getElementById('cdQ').addEventListener('input', cdPickRender);
+document.getElementById('cdPick').addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.pid !== undefined) { t.checked ? cdSel.add(t.dataset.pid) : cdSel.delete(t.dataset.pid); }
+  else if (t.dataset.cat !== undefined) {
+    cdFiltered().filter(p => (p.category || 'Otro') === t.dataset.cat).forEach(p => { t.checked ? cdSel.add(String(p.id)) : cdSel.delete(String(p.id)); });
+  } else return;
+  cdPickRender();
+});
+function resetCodeForm() {
+  cdEditing = null; cdSel = new Set();
+  ['cdCode', 'cdPct', 'cdOwner', 'cdUntil', 'cdQ'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('cdCode').readOnly = false;
+  document.getElementById('cdNoCombo').checked = true;
+  document.querySelector('input[name=cdScope][value=all]').checked = true;
+  document.getElementById('btnCode').textContent = 'Agregar código';
+  document.getElementById('btnCodeCancel').hidden = true;
+  document.getElementById('cdEditNote').hidden = true;
+  cdScopeUi();
+}
+function codeEdit(x) {
+  cdEditing = x.c; cdSel = new Set(x.ids);
+  document.getElementById('cdCode').value = x.c; document.getElementById('cdCode').readOnly = true;
+  document.getElementById('cdPct').value = x.p; document.getElementById('cdOwner').value = x.n; document.getElementById('cdUntil').value = x.u;
+  document.getElementById('cdNoCombo').checked = x.x; document.getElementById('cdQ').value = '';
+  document.querySelector('input[name=cdScope][value=' + (x.ids.length ? 'pick' : 'all') + ']').checked = true;
+  document.getElementById('btnCode').textContent = 'Guardar cambios';
+  document.getElementById('btnCodeCancel').hidden = false;
+  const note = document.getElementById('cdEditNote'); note.textContent = 'Editando el código ' + x.c; note.hidden = false;
+  cdScopeUi(); document.getElementById('cdCode').scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+async function addCode() {
+  const editing = cdEditing, c = codeNorm(document.getElementById('cdCode').value), p = parseInt(document.getElementById('cdPct').value, 10);
+  if (!CODE_RE.test(c)) { showToast('El código debe tener 3 letras y 3 números (ej. VAL123). Toca «Generar» si quieres uno.'); return; }
+  if (!(p >= 1 && p <= 90)) { showToast('Escribe un descuento entre 1 y 90 %'); return; }
+  if (!editing && cdAdmin.some(x => x.c === c)) { showToast('Ese código ya existe'); return; }
+  if (!editing && cdAdmin.length >= CODE_MAX) { showToast('Máximo ' + CODE_MAX + ' códigos: quita alguno'); return; }
+  const pick = cdScope() === 'pick', ids = pick ? Array.from(cdSel) : [];
+  if (pick && !ids.length) { showToast('Marca al menos un producto, o elige «A todo el catálogo»'); return; }
+  const u = document.getElementById('cdUntil').value, old = cdAdmin.find(x => x.c === c);
+  const entry = { c, p, u: /^\d{4}-\d{2}-\d{2}$/.test(u) ? u : '', n: document.getElementById('cdOwner').value.trim().slice(0, 30),
+    x: !pick && document.getElementById('cdNoCombo').checked, a: editing && old ? old.a : true, ids };
+  const btn = document.getElementById('btnCode'); btn.disabled = true;
+  try {
+    await saveCodes(editing ? cdAdmin.map(x => x.c === c ? entry : x) : cdAdmin.concat([entry]));
+    resetCodeForm();
+    showToast(editing ? 'Código ' + c + ' actualizado ✓' : 'Código ' + c + ' creado ✓');
+  } catch (e) { showToast('No se pudo guardar: ' + errText(e)); }
+  finally { btn.disabled = false; }
+}
+async function copyTxt(text, ok) {
+  try { await navigator.clipboard.writeText(text); showToast(ok); return; } catch (e) {}
+  const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast(ok); } catch (e) { showToast('No se pudo copiar'); }
+  ta.remove();
+}
+document.getElementById('cdList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-ca]'); if (!b) return;
+  const x = cdAdmin.find(y => y.c === b.dataset.c); if (!x) return;
+  if (b.dataset.ca === 'copy') {
+    copyTxt('Usa el código ' + x.c + ' en House Queen y obtén ' + x.p + ' % de descuento 🖤 Escríbelo en «Mi pedido» antes de enviar tu pedido: https://housequeen.github.io/catalogo/' + (x.u ? ' (válido hasta el ' + ofDate(x.u) + ')' : ''), 'Mensaje copiado ✓');
+    return;
+  }
+  if (b.dataset.ca === 'edit') { codeEdit(x); return; }
+  if (b.dataset.ca === 'rm' && !confirm('¿Quitar el código ' + x.c + '?')) return;
+  b.disabled = true;
+  try {
+    await saveCodes(b.dataset.ca === 'rm' ? cdAdmin.filter(y => y !== x) : cdAdmin.map(y => y === x ? Object.assign({}, y, { a: !y.a }) : y));
+    if (b.dataset.ca === 'rm' && cdEditing === x.c) resetCodeForm();
+    showToast(b.dataset.ca === 'rm' ? 'Código quitado ✓' : 'Listo ✓');
+  } catch (er) { showToast('No se pudo guardar: ' + errText(er)); b.disabled = false; }
+});
+document.getElementById('cdCode').addEventListener('input', e => { const v = codeNorm(e.target.value); if (v !== e.target.value) e.target.value = v; });
 
 // ── CLIENTES (franja de logos; se edita desde el admin) ──
 // Se guarda como fila "del sistema". Solo se guarda el nombre del archivo del logo, para que quepa en el límite de texto.
